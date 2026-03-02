@@ -1,0 +1,362 @@
+// HITECH SOFT GLASS SIDEBAR REDESIGN - CREATIVE v3
+// Matches Login Page Aesthetic: Teal Gradient Profile Card
+
+$teal-dark: #003d3d;
+$teal: #005a5a;
+$teal-light: #007a7a;
+$text-dark: #334155;
+$text-muted: #64748b;
+$border-color: rgba(0, 0, 0, 0.05);
+
+.hitech-sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #ffffff;
+    border-right: 1px solid $border-color;
+    display: flex;
+    flex-direction: column;
+    z-index: 1100; // Bumped to 1100 to confidently sit above .layout-overlay (which is 1099)
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+
+    // 1. LOGO HEADER - REFINED
+    .hitech-logo-area {
+        padding: 1.5rem 1rem 2rem;
+        background: transparent;
+
+        display: flex;
+        align-items: center;
+        justify-content: center; // Center align the link
+
+        .hitech-logo-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            justify-content: center; // Ensure content inside link is centered
+
+            .hitech-logo-container {
+                width: auto;
+                max-width: 100%;
+                height: auto;
+                max-height: 54px;
+                display: flex;
+                align-items: center;
+                justify-content: center; // Center image
+                border-radius: 12px;
+                // No background needed on teal header
+
+                img {
+                    width: auto;
+                    height: 100%;
+                    max-height: 54px;
+                    object-fit: contain;
+                }
+            }
+
+            .hitech-brand-text {
+                font-size: 1.4rem;
+                font-weight: 800;
+                color: #ffffff; // White text for contrast
+                letter-spacing: -0.5px;
+                line-height: 1;
+            }
+        }
+    }
+
+    // 2. SCROLLABLE MENU
+    .hitech-menu-container {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 0 14px;
+
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .hitech-menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            .hitech-menu-header {
+                margin: 1.5rem 0 0.5rem;
+                padding: 0 1rem;
+
+                span {
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                    color: #94a3b8;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+            }
+
+            .hitech-menu-item {
+                position: relative;
+
+                .hitech-menu-link {
+                    display: flex;
+                    align-items: center;
+                    padding: 0.75rem 1rem;
+                    color: $text-muted;
+                    text-decoration: none;
+                    font-weight: 500;
+                    font-size: 0.93rem;
+                    border-radius: 10px;
+                    transition: all 0.2s ease;
+                    border: 1px solid transparent;
+                    cursor: pointer;
+
+                    .hitech-menu-icon {
+                        font-size: 1.25rem;
+                        width: 1.5rem;
+                        margin-right: 0.75rem;
+                        text-align: center;
+                        color: $text-muted;
+                        transition: color 0.2s ease;
+                    }
+
+                    .hitech-menu-text {
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        flex: 1;
+                    }
+
+                    &.has-submenu {
+                        position: relative;
+                        padding-right: 2.5rem; // Make room for chevron
+
+                        &::after {
+                            content: "";
+                            position: absolute;
+                            right: 1.25rem;
+                            top: 50%;
+                            width: 8px;
+                            height: 8px;
+                            border-right: 2px solid currentColor;
+                            border-bottom: 2px solid currentColor;
+                            transform: translateY(-50%) rotate(-45deg);
+                            transition: transform 0.3s ease;
+                            opacity: 0.7;
+                        }
+                    }
+
+                    &:hover {
+                        background-color: #f8fafc;
+                        color: #1e293b;
+
+                        .hitech-menu-icon {
+                            color: $teal;
+                        }
+                    }
+                }
+
+                &.active>.hitech-menu-link {
+                    background-color: $teal;
+                    color: #fff;
+                    font-weight: 600;
+                    box-shadow: 0 6px 12px -4px rgba(0, 90, 90, 0.3);
+
+                    .hitech-menu-icon {
+                        color: #fff;
+                    }
+                }
+
+                &.open>.hitech-menu-link.has-submenu::after {
+                    transform: translateY(-50%) rotate(45deg);
+                }
+
+                &.active.open>.hitech-menu-link {
+                    background-color: #f1f5f9;
+                    color: #0f172a;
+
+                    .hitech-menu-icon {
+                        color: $teal;
+                    }
+                }
+
+                // Correctly nested block display trigger
+                &.open {
+                    >.hitech-submenu {
+                        display: block !important;
+                    }
+                }
+            }
+        }
+    }
+
+    // 3. SUBMENU
+    .hitech-submenu {
+        list-style: none;
+        padding: 0;
+        margin: 4px 0 4px 12px;
+        display: none;
+        border-left: 1px solid #e2e8f0;
+
+        // Removing the incorrect `&` parent selector which broke Sass compilation
+
+        .hitech-submenu-item {
+            margin-left: 12px;
+            margin-bottom: 2px;
+
+            .hitech-submenu-link {
+                display: block;
+                padding: 0.6rem 1rem;
+                font-size: 0.88rem;
+                color: $text-muted;
+                text-decoration: none;
+                border-radius: 8px;
+                transition: all 0.2s;
+
+                &:hover {
+                    color: $teal;
+                    background: rgba(0, 90, 90, 0.03);
+                }
+            }
+
+            &.active .hitech-submenu-link {
+                color: $teal;
+                font-weight: 600;
+                background: rgba(0, 90, 90, 0.08);
+            }
+        }
+    }
+
+    // 4. BOTTOM PROFILE CARD - CREATIVE TEAL GRADIENT
+    // Matches the Login Page Aesthetic
+    .hitech-profile-card {
+        padding: 1rem;
+        margin: 1rem 14px 1.8rem;
+
+        // CREATIVE GRADIENT BACKGROUND
+        background: linear-gradient(135deg, #005a5a 0%, #003d3d 100%);
+        position: relative;
+        overflow: hidden;
+
+        // Glass/Shine Effect on top
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 25px -5px rgba(0, 90, 90, 0.25);
+
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px -5px rgba(0, 90, 90, 0.35);
+        }
+
+        .hitech-profile-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 1; // Ensure above gradient
+
+            .hitech-avatar {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                overflow: hidden;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                border: 2px solid rgba(255, 255, 255, 0.8);
+                flex-shrink: 0;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+
+            .hitech-user-meta {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                justify-content: center;
+
+                .hitech-user-name {
+                    font-size: 0.94rem;
+                    font-weight: 700;
+                    color: #ffffff; // White text
+                    line-height: 1.25;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .hitech-user-role {
+                    font-size: 0.72rem;
+                    font-weight: 600;
+                    color: rgba(255, 255, 255, 0.7); // Muted white
+                    text-transform: uppercase;
+                    margin-top: 2px;
+                    letter-spacing: 0.5px;
+                }
+            }
+
+            .hitech-profile-actions {
+                color: rgba(255, 255, 255, 0.6);
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+
+                &:hover {
+                    color: #ffffff;
+                    background: rgba(255, 255, 255, 0.1);
+                }
+            }
+        }
+    }
+}
+
+// RESPONSIVENESS
+@media (max-width: 1199.98px) {
+    .hitech-sidebar {
+        transform: translateX(-100%);
+        box-shadow: none;
+    }
+
+    html.layout-menu-expanded .hitech-sidebar,
+    body.layout-menu-expanded .hitech-sidebar {
+        transform: translateX(0);
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.2); // Stronger shadow when expanded over overlay
+    }
+}

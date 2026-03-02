@@ -1,0 +1,548 @@
+@use '../_bootstrap-extended/include' as light;
+
+// *******************************************************************************
+// * HITECH SECURE GATEWAY — PREMIUM RESPONSIVE DESIGN
+// *******************************************************************************
+
+$teal: #005a5a;
+$teal-dark: #003d3d;
+$text-primary: #003333;
+$text-muted: #64748b;
+$bg-input: #f8fafc;
+$border: #e2e8f0;
+
+// ─────────────────────────────────────────────
+// DESKTOP WRAPPER
+// ─────────────────────────────────────────────
+// HITECH PREMIUM GLASS CONFIG
+$glass-bg: rgba(255, 255, 255, 0.1);
+$glass-border: rgba(255, 255, 255, 0.2);
+$glass-shadow: 0 40px 120px -20px rgba(0, 0, 0, 0.25);
+$primary-glow: #008a8a;
+
+// ─────────────────────────────────────────────
+// DESKTOP WRAPPER
+// ─────────────────────────────────────────────
+.hitech-gateway-wrapper {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(0, 90, 90, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(0, 122, 122, 0.1) 0%, transparent 40%),
+    linear-gradient(135deg, #eef2f3 0%, #dae2e5 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 122, 122, 0.08) 0%, transparent 70%);
+    top: -200px;
+    left: -100px;
+    pointer-events: none;
+  }
+
+  .gateway-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+  }
+
+  // DESKTOP CARD
+  .gateway-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    width: 1000px;
+    max-width: 100%;
+    height: 680px;
+    max-height: 90vh;
+    border-radius: 32px;
+    overflow: hidden;
+    display: flex;
+    box-shadow: $glass-shadow;
+    border: 1px solid $glass-border;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+    // LEFT IDENTITY PANEL
+    .identity-panel {
+      width: 42%;
+      min-width: 320px;
+      background: linear-gradient(160deg, #003d3d 0%, #005a5a 100%);
+      padding: 4.5rem 3.5rem;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 10px 0 40px rgba(0, 0, 0, 0.1);
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 260px;
+        height: 260px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -80px;
+        left: -40px;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 50%;
+      }
+
+      .content {
+        position: relative;
+        z-index: 1;
+
+        .identity-logo {
+          max-width: 160px;
+          height: auto;
+          margin-bottom: 1.5rem;
+          display: block;
+          filter: brightness(0) invert(1); // ensure white version
+        }
+
+        .label {
+          font-size: 0.7rem;
+          letter-spacing: 3px;
+          color: rgba(255, 255, 255, 0.5);
+          font-weight: 700;
+          text-transform: uppercase;
+        }
+
+        h1 {
+          font-size: 2.4rem;
+          color: #fff;
+          font-weight: 800;
+          line-height: 1.15;
+          margin: 1.2rem 0 2.5rem;
+        }
+
+        .features {
+          display: flex;
+          flex-direction: column;
+          gap: 1.4rem;
+
+          .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+
+            i {
+              font-size: 1.3rem;
+              color: rgba(255, 255, 255, 0.7);
+              flex-shrink: 0;
+            }
+
+            p {
+              margin: 0;
+              font-size: 0.88rem;
+              color: rgba(255, 255, 255, 0.88);
+              font-weight: 500;
+              line-height: 1.4;
+            }
+          }
+        }
+      }
+
+      .footer-note {
+        position: relative;
+        z-index: 1;
+        font-size: 0.6rem;
+        color: rgba(255, 255, 255, 0.3);
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+    }
+
+    // RIGHT FORM PANEL
+    .form-panel {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(10px);
+
+      // Mobile banner hidden on desktop
+      .mobile-brand-banner {
+        display: none;
+      }
+
+      // Form content fills the panel
+      .form-inner {
+        flex: 1;
+        padding: 3.5rem 4.5rem;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
+// SHARED FORM ELEMENTS
+// ─────────────────────────────────────────────
+.hitech-role-switcher {
+  margin-bottom: 2rem;
+
+  .switcher-pill {
+    background: rgba(0, 0, 0, 0.04);
+    padding: 6px;
+    border-radius: 50px;
+    display: flex;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+
+    .role-option {
+      background: transparent;
+      border: none;
+      flex: 1;
+      padding: 10px 8px;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.5px;
+
+      &.active {
+        background: #fff;
+        color: #005a5a;
+        box-shadow: 0 4px 15px rgba(0, 90, 90, 0.12);
+      }
+    }
+  }
+}
+
+.form-header {
+  margin: 1.5rem 0 1.8rem;
+
+  h2 {
+    font-weight: 800;
+    color: $text-primary;
+    margin-bottom: 0.3rem;
+    font-size: 1.5rem;
+  }
+
+  p {
+    color: $text-muted;
+    font-weight: 500;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+}
+
+.form-label {
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  color: #475569 !important;
+  letter-spacing: 0.6px !important;
+  margin-bottom: 0.45rem !important;
+}
+
+.hitech-input-group {
+  background: $bg-input;
+  border: 1.5px solid $border;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+
+  &:focus-within {
+    background: #fff;
+    border-color: $teal;
+    box-shadow: 0 0 0 4px rgba(0, 90, 90, 0.07);
+  }
+
+  .group-icon {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    margin-right: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .form-control {
+    background: transparent !important;
+    border: none !important;
+    padding: 0.85rem 0 !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    box-shadow: none !important;
+    font-size: 0.9rem !important;
+
+    &::placeholder {
+      color: #cbd5e1;
+      font-weight: 400;
+    }
+  }
+}
+
+.hitech-captcha-box {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+
+  .captcha-display {
+    background: #fff;
+    border: 1.5px solid rgba(0, 90, 90, 0.15);
+    border-radius: 12px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 90, 90, 0.05);
+
+    .code-text {
+      font-weight: 900;
+      letter-spacing: 4px;
+      color: #005a5a;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+    }
+
+    .refresh-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0;
+      line-height: 1;
+      transition: all 0.3s;
+
+      &:hover {
+        color: #007a7a;
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .captcha-input-field {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    font-weight: 800 !important;
+    font-size: 1rem !important;
+    flex: 1;
+    padding: 0.5rem !important;
+    color: #1e293b !important;
+    letter-spacing: 1px;
+  }
+}
+
+.hitech-btn-admin {
+  background: linear-gradient(135deg, #005a5a 0%, #007a7a 100%) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  padding: 1.15rem !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  font-size: 1rem !important;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  box-shadow: 0 10px 25px rgba(0, 90, 90, 0.3) !important;
+  white-space: nowrap;
+  margin-top: 1rem;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+
+  &:hover {
+    background: linear-gradient(135deg, #003d3d 0%, #005a5a 100%) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0, 90, 90, 0.4) !important;
+  }
+}
+
+.form-footer {
+  margin-top: auto;
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .footer-link {
+    text-decoration: none;
+    font-weight: 700;
+    color: $teal;
+    font-size: 0.82rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
+// MOBILE — Full-screen premium layout
+// ─────────────────────────────────────────────
+@media (max-width: 768px) {
+  .hitech-gateway-wrapper {
+    padding: 0;
+    background: $teal-dark;
+    align-items: stretch;
+
+    .gateway-container {
+      padding: 0;
+      align-items: stretch;
+    }
+
+    .gateway-card {
+      width: 100%;
+      height: auto;
+      max-height: none;
+      border-radius: 0;
+      flex-direction: column;
+      box-shadow: none;
+      border: none;
+      background: transparent;
+      overflow: visible;
+
+      // Hide desktop left panel
+      .identity-panel {
+        display: none !important;
+      }
+
+      .form-panel {
+        flex: 1;
+        flex-direction: column;
+        display: flex;
+        overflow: visible;
+        background: transparent;
+
+        // SHOW mobile banner on phones
+        .mobile-brand-banner {
+          display: flex !important;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding: 2.5rem 2rem 3rem;
+          background: transparent;
+          position: relative;
+          z-index: 1;
+
+          .mobile-logo {
+            max-width: 140px;
+            height: auto;
+            margin-bottom: 1rem;
+            display: block;
+            filter: brightness(0) invert(1);
+          }
+
+          h2 {
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.3rem;
+            margin: 0 0 0.4rem;
+          }
+
+          p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            margin: 0;
+            font-weight: 500;
+          }
+
+          .version-badge {
+            margin-top: 1rem;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            border-radius: 20px;
+            padding: 4px 12px;
+          }
+        }
+
+        // Form card slides up with rounded top corners
+        .form-inner {
+          background: #fff;
+          border-radius: 28px 28px 0 0;
+          margin-top: -24px;
+          padding: 2rem 1.6rem 2.5rem;
+          position: relative;
+          z-index: 2;
+          flex: 1;
+          box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.08);
+          overflow-y: auto;
+          min-height: 0;
+
+          .form-header {
+            margin: 0 0 1.4rem;
+
+            h2 {
+              font-size: 1.3rem;
+            }
+          }
+
+          .hitech-input-group {
+            border-radius: 14px;
+
+            .form-control {
+              padding: 1rem 0 !important;
+            }
+          }
+
+          .hitech-captcha-box {
+            border-radius: 14px;
+          }
+
+          .hitech-btn-admin {
+            border-radius: 14px !important;
+            padding: 1.1rem !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+// MEDIUM SCREENS
+@media (max-width: 1050px) and (min-width: 769px) {
+  .hitech-gateway-wrapper .gateway-card {
+    width: 95%;
+
+    .identity-panel {
+      padding: 3rem 2rem;
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
+
+    .form-panel .form-inner {
+      padding: 2.5rem 3rem;
+    }
+  }
+}
