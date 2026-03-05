@@ -19,7 +19,7 @@ jobs:
       - name: Create Deployment Archive
         run: |
           echo "Creating archive..."
-          tar -czf deploy.tar.gz --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='vendor' --exclude='storage/*.log' --exclude='.env' .
+          tar -czf deploy.tar.gz --exclude='deploy.tar.gz' --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='vendor' --exclude='storage/*.log' --exclude='.env' .
           echo "Archive created: $(ls -lh deploy.tar.gz)"
 
       - name: Prepare Server Environment
