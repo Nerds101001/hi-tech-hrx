@@ -18,9 +18,10 @@ jobs:
 
       - name: Create Deployment Archive
         run: |
-          echo "Creating archive in parent directory..."
-          tar -czf ../deploy.tar.gz --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='vendor' --exclude='storage/*.log' --exclude='.env' .
-          echo "Archive created: $(ls -lh ../deploy.tar.gz)"
+          echo "Creating archive in /tmp..."
+          # Using /tmp ensures we are not archiving the file as it's being written
+          tar -czf /tmp/deploy.tar.gz --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='vendor' --exclude='storage/*.log' --exclude='.env' .
+          echo "Archive created at /tmp/deploy.tar.gz"
 
       - name: Prepare Server Environment
         uses: appleboy/ssh-action@master
@@ -30,8 +31,6 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            echo "Current Directory: $(pwd)"
-            echo "Target Directory: /home/${{ secrets.SSH_USER }}/domains/hitechgroup.in/public_html/hrx"
             mkdir -p /home/${{ secrets.SSH_USER }}/domains/hitechgroup.in/public_html/hrx
             echo "Environment prepared."
 
@@ -42,7 +41,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: "../deploy.tar.gz"
+          source: "/tmp/deploy.tar.gz"
           target: "/home/${{ secrets.SSH_USER }}/domains/hitechgroup.in/public_html/hrx"
           strip_components: 1
           debug: true
