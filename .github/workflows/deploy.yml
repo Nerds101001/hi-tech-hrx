@@ -16,27 +16,20 @@ jobs:
           php-version: '8.2'
           extensions: mbstring, xml, ctype, iconv, mysql, zip
 
-      - name: Deploy via SSH
+      - name: Create Deployment Archive
+        run: tar -czf deploy.tar.gz --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='vendor' --exclude='storage/*.log' --exclude='.env' .
+
+      - name: Upload Archive
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: "."
+          source: "deploy.tar.gz"
           target: "domains/hitechgroup.in/public_html/hrx"
-          strip_components: 0
-          rm: false
-          exclude: |
-            .git/
-            .github/
-            node_modules/
-            vendor/
-            storage/
-            .env
-            tests/
 
-      - name: Execute Remote Commands
+      - name: Extract and Deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -45,6 +38,9 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd domains/hitechgroup.in/public_html/hrx
+            tar -xzf deploy.tar.gz
+            rm deploy.tar.gz
+            
             # Ensure storage directories exist with correct permissions
             mkdir -p storage/app/public storage/framework/cache storage/framework/sessions storage/framework/views storage/logs
             chmod -R 775 storage bootstrap/cache
