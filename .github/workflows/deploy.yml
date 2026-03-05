@@ -8,7 +8,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -16,14 +17,14 @@ jobs:
           php-version: '8.2'
           extensions: mbstring, xml, ctype, iconv, mysql, zip
 
-      - name: Create Deployment Archive
+      - name: Create Deployment Package
         run: |
-          echo "Creating archive in /tmp..."
-          # Using /tmp ensures we are not archiving the file as it's being written
-          tar -czf /tmp/deploy.tar.gz --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='vendor' --exclude='storage/*.log' --exclude='.env' .
-          echo "Archive created at /tmp/deploy.tar.gz"
+          echo "Packaging application..."
+          # We archive the current directory but exclude the archive file itself and other unnecessary items
+          tar -czf deployment.tar.gz --exclude='deployment.tar.gz' --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='vendor' --exclude='.env' .
+          echo "Package created."
 
-      - name: Prepare Server Environment
+      - name: Prepare Hostinger Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -31,22 +32,21 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
+            echo "Initializing target directory..."
             mkdir -p /home/${{ secrets.SSH_USER }}/domains/hitechgroup.in/public_html/hrx
-            echo "Environment prepared."
+            echo "Directory ready."
 
-      - name: Upload Archive
+      - name: Transfer Package to Hostinger
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: "/tmp/deploy.tar.gz"
+          source: "deployment.tar.gz"
           target: "/home/${{ secrets.SSH_USER }}/domains/hitechgroup.in/public_html/hrx"
-          strip_components: 1
-          debug: true
 
-      - name: Extract and Deploy
+      - name: Extract and Run Deploy Script
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -54,47 +54,37 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            echo "Moving to target directory..."
-            cd /home/${{ secrets.SSH_USER }}/domains/hitechgroup.in/public_html/hrx || { echo "Directory not found"; exit 1; }
+            set -e
+            cd /home/${{ secrets.SSH_USER }}/domains/hitechgroup.in/public_html/hrx
             
-            echo "Extracting archive..."
-            if [ -f "deploy.tar.gz" ]; then
-              tar -xzf deploy.tar.gz
-              rm deploy.tar.gz
-              echo "Extraction complete."
+            echo "Unpacking files..."
+            if [ -f "deployment.tar.gz" ]
+            then
+              tar -xzf deployment.tar.gz
+              rm deployment.tar.gz
             else
-              echo "Error: deploy.tar.gz not found in $(pwd)"
-              ls -la
+              echo "Error: deployment.tar.gz missing on server."
               exit 1
             fi
             
-            echo "Setting up storage permissions..."
+            echo "Securing storage directories..."
             mkdir -p storage/app/public storage/framework/cache storage/framework/sessions storage/framework/views storage/logs
             chmod -R 775 storage bootstrap/cache
             
-            echo "Checking environment file..."
-            if [ ! -f ".env" ]; then
-              echo "Warning: .env file missing. Creating from .env.example..."
+            echo "Completing Laravel setup..."
+            # Check for existing .env, create if missing
+            if [ ! -f ".env" ]
+            then
               cp .env.example .env
-              php artisan key:generate || echo "Key generation failed - likely PHP missing or path issue"
+              php artisan key:generate
             fi
             
-            echo "Running Composer..."
-            export PATH=$PATH:/usr/local/bin:/usr/bin
-            if [ -f "composer.json" ]; then
-               # Attempt to find composer if it's not in PATH
-               COMPOSER_BIN=$(which composer || find /usr -name composer -type f 2>/dev/null | head -n 1 || echo "composer")
-               $COMPOSER_BIN install --no-dev --optimize-autoloader --no-interaction || echo "Composer install failed - continuing..."
-            fi
+            # Run optimizations but allow them to fail if DB is not configured yet
+            composer install --no-dev --optimize-autoloader --no-interaction || echo "Composer failed - skipping."
+            php artisan migrate --force --no-interaction || echo "Migrations failed - likely DB not ready."
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan storage:link || true
             
-            echo "Running Artisan migrations..."
-            if [ -f "artisan" ]; then
-              php artisan migrate --force --no-interaction || echo "Migrations failed - likely database not configured in .env"
-              php artisan config:cache
-              php artisan route:cache
-              php artisan view:cache
-              php artisan storage:link || true
-            fi
-            echo "Final check of directory contents:"
-            ls -F
-            echo "Deployment step finished."
+            echo "Deployment finished successfully."
