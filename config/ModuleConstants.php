@@ -120,6 +120,7 @@ class ModuleConstants
     self::APPROVALS,
     self::DISCIPLINARY_ACTIONS,
     self::HR_POLICIES,
+    self::PAYROLL,
   ];
 
 }

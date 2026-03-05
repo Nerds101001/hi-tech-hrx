@@ -28,8 +28,9 @@
     $settings = \App\Models\Settings::first();
 @endphp
 
-<div class="animate__animated animate__fadeIn">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="">
+    <div class="animate__animated animate__fadeIn">
+        <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="fw-bold mb-1">{{ $user->getFullName() }}</h4>
             <span class="text-muted" style="font-size: 0.85rem;">Manage employee details and financial information.</span>
@@ -113,7 +114,7 @@
 
             <!-- Management Control Section -->
             <div class="card emp-card mb-4 border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
-                <div class="card-header py-3 px-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%);">
+                <div class="card-header py-3 px-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #127464 0%, #0E5A4E 100%);">
                     <h6 class="fw-bold mb-0 text-white small text-uppercase" style="letter-spacing: 1.5px;"><i class="bx bx-shield-quarter me-2"></i>Management Control</h6>
                     <span class="badge {{ $user->status == UserAccountStatus::ACTIVE ? 'bg-success' : 'bg-danger' }} rounded-pill" style="font-size: 0.6rem; letter-spacing: 1px;">{{ strtoupper($user->status->name ?? $user->status) }}</span>
                 </div>
@@ -132,7 +133,7 @@
                         </div>
                     @else
                         <!-- Status Selection -->
-                        <div class="p-3 rounded-3 mb-4 bg-light border-start border-primary border-4 shadow-xs">
+                        <div class="p-3 rounded-3 mb-4 border" style="background: rgba(18, 116, 100, 0.03); border-color: rgba(18, 116, 100, 0.1) !important;">
                              <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                     <p class="mb-0 fw-bold text-dark small">Active Employment</p>
@@ -149,10 +150,10 @@
                         @if ($user->status == \App\Enums\UserAccountStatus::ONBOARDING_SUBMITTED || $user->status == \App\Enums\UserAccountStatus::ONBOARDING_REQUESTED)
                             <!-- Onboarding Actions -->
                             <div class="d-flex gap-2 mb-4">
-                                <button type="button" class="btn btn-success flex-fill rounded-pill fw-bold small py-2 d-flex align-items-center justify-content-center" onclick="approveOnboarding({{ $user->id }})">
+                                <button type="button" class="btn btn-success btn-sm flex-fill rounded-pill fw-bold" onclick="approveOnboarding({{ $user->id }})">
                                     <i class="bx bx-check-circle me-1"></i> Approve
                                 </button>
-                                <button type="button" class="btn btn-warning flex-fill rounded-pill fw-bold small py-2 d-flex align-items-center justify-content-center text-dark" onclick="requestModification({{ $user->id }})">
+                                <button type="button" class="btn btn-sm flex-fill rounded-pill fw-bold text-white shadow-sm" style="background-color: #f97316; border-color: #ea580c;" onclick="requestModification({{ $user->id }})">
                                     <i class="bx bx-edit-alt me-1"></i> Modification
                                 </button>
                             </div>
@@ -290,12 +291,17 @@
                 .emp-card .card-body { padding: 1.75rem !important; }
                 .emp-field-box {
                     background-color: #F8FAFC;
-                    border: 1px solid #F1F5F9;
-                    border-radius: 10px;
-                    padding: 0.85rem 1.1rem;
-                    transition: all 0.2s ease;
+                    border: 1px solid #E2E8F0;
+                    border-radius: 12px;
+                    padding: 1rem 1.2rem;
+                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                 }
-                .emp-field-box:hover { border-color: #127464; background-color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+                .emp-field-box:hover { 
+                    border-color: #127464; 
+                    background-color: #F0FAFA; 
+                    box-shadow: 0 4px 12px rgba(18, 116, 100, 0.05); 
+                    transform: translateY(-2px);
+                }
 
                 /* =================== HITECH MODAL STYLES =================== */
                 .modal-content-hitech {
@@ -399,11 +405,9 @@
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" href="#documents"><i class="bx bx-file me-1"></i> Documents</a>
                     </li>
-                    @if ($addonService->isAddonEnabled(ModuleConstants::PAYROLL))
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#payroll"><i class="bx bx-wallet me-1"></i> Payroll</a>
-                        </li>
-                    @endif
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#payroll"><i class="bx bx-wallet me-1"></i> Payroll</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" href="#kpi"><i class="bx bx-trending-up me-1"></i> KPI</a>
                     </li>
@@ -606,7 +610,7 @@
                                             </div>
                                             <div>
                                                 <p class="mb-0 text-muted small fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.05em;">Designation</p>
-                                                <p class="mb-0 fw-bold text-dark">{{ $user->designation != null ? $user->designation->name : 'N/A' }}</p>
+                                                <p class="mb-0 fw-bold text-dark">{{ $user->designation?->name ?? 'N/A' }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -670,22 +674,31 @@
 
                             @if ($user->userDevice)
                                 <div class="row g-4">
-                                    <div class="col-md-4">
-                                        <div class="p-3 rounded-3" style="background-color: #F8FAFC; border: 1px solid #F1F5F9;">
-                                            <p class="mb-1 text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">Device ID</p>
-                                            <p class="mb-0 fw-bold text-dark small">{{ $user->userDevice->device_id }}</p>
+                                    <div class="col-md-3">
+                                        <div class="p-3 rounded-4" style="background-color: #F8FAFC; border: 1px solid #E2E8F0;">
+                                            <p class="mb-1 text-muted smallest fw-bold text-uppercase">Device ID</p>
+                                            <p class="mb-0 fw-bold text-dark small text-truncate">{{ $user->userDevice->device_id }}</p>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="p-3 rounded-3" style="background-color: #F8FAFC; border: 1px solid #F1F5F9;">
-                                            <p class="mb-1 text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">Brand / Model</p>
-                                            <p class="mb-0 fw-bold text-dark small">{{ $user->userDevice->brand ?? 'N/A' }}</p>
+                                    <div class="col-md-3">
+                                        <div class="p-3 rounded-4" style="background-color: #F8FAFC; border: 1px solid #E2E8F0;">
+                                            <p class="mb-1 text-muted smallest fw-bold text-uppercase">Brand / Model</p>
+                                            <p class="mb-0 fw-bold text-dark small text-truncate">{{ $user->userDevice->brand ?? 'N/A' }}</p>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="p-3 rounded-3" style="background-color: #F8FAFC; border: 1px solid #F1F5F9;">
-                                            <p class="mb-1 text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">App Version</p>
-                                            <p class="mb-0 fw-bold text-dark small">{{ $user->userDevice->app_version ?? 'N/A' }}</p>
+                                    @php
+                                        $assignedAsset = $user->currentAssets()->first();
+                                    @endphp
+                                    <div class="col-md-3">
+                                        <div class="p-3 rounded-4" style="background-color: #F0FAFA; border: 1px solid #127464; border-style: dashed;">
+                                            <p class="mb-1 text-success smallest fw-bold text-uppercase">Serial Number</p>
+                                            <p class="mb-0 fw-bold text-dark small text-truncate">{{ $assignedAsset->serial_number ?? 'N/A' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="p-3 rounded-4" style="background-color: #F0FAFA; border: 1px solid #127464; border-style: dashed;">
+                                            <p class="mb-1 text-success smallest fw-bold text-uppercase">Service Tag</p>
+                                            <p class="mb-0 fw-bold text-dark small text-truncate">{{ $assignedAsset->notes ?? 'N/A' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -822,38 +835,61 @@
                                      $user->status != \App\Enums\UserAccountStatus::RELIEVED &&
                                          $user->status != \App\Enums\UserAccountStatus::RETIRED &&
                                          $user->status != \App\Enums\UserAccountStatus::TERMINATED)
-                                     <button class="btn btn-sm text-white px-4 rounded-pill shadow-sm" style="background-color: #127464;" data-bs-toggle="modal" data-bs-target="#offcanvasAddAccount" onclick="loadBankDetails()">
+                                     <button class="btn btn-sm text-white px-4 rounded-pill shadow-sm" style="background-color: #127464;" data-bs-toggle="modal" data-bs-target="#editBankAccountModal" onclick="loadBankDetails()">
                                          <i class="bx bx-edit-alt me-1"></i> Edit Banking
                                      </button>
                                  @endif
                              </div>
 
-                            @if ($user->bank_account)
+                            @php
+                                $bank = $user->bankAccount ?: $user->bank_account;
+                                // Even more defensive check to prevent 'property on null'
+                                $hasBankData = $bank && (is_object($bank) || is_array($bank)) && (isset($bank->bank_name) || isset($bank->account_number));
+                            @endphp
+
+                            @if ($hasBankData)
                                 <div class="row g-4">
                                     <div class="col-md-6">
                                         <div class="emp-field-box">
                                             <p class="mb-1 text-muted smallest fw-bold text-uppercase">Beneficiary Name</p>
-                                            <p class="mb-0 fw-bold text-dark">{{ $user->bank_account->account_name }}</p>
+                                            <p class="mb-0 fw-bold text-dark">{{ $bank->account_name }}</p>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="emp-field-box">
                                             <p class="mb-1 text-muted smallest fw-bold text-uppercase">Bank Name</p>
-                                            <p class="mb-0 fw-bold text-dark">{{ $user->bank_account->bank_name }}</p>
+                                            <p class="mb-0 fw-bold text-dark">{{ $bank->bank_name }}</p>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="emp-field-box border-dashed">
                                             <p class="mb-1 text-muted smallest fw-bold text-uppercase">Account Number</p>
-                                            <p class="mb-0 fw-extrabold text-dark">•••• •••• •••• {{ substr($user->bank_account->account_number, -4) }}</p>
+                                            <p class="mb-0 fw-extrabold text-dark">•••• •••• •••• {{ substr($bank->account_number, -4) }}</p>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="emp-field-box">
-                                            <p class="mb-1 text-muted smallest fw-bold text-uppercase">IFSC / Branch Code</p>
-                                            <p class="mb-0 fw-bold text-dark">{{ $user->bank_account->bank_code }}</p>
+                                            <p class="mb-1 text-muted smallest fw-bold text-uppercase">IFSC / Bank Code</p>
+                                            <p class="mb-0 fw-bold text-dark">{{ $bank->bank_code }}</p>
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="emp-field-box">
+                                            <p class="mb-1 text-muted smallest fw-bold text-uppercase">Branch Name</p>
+                                            <p class="mb-0 fw-bold text-dark">{{ $bank->branch_name ?? 'N/A' }}</p>
+                                        </div>
+                                    </div>
+                                    @if($bank->passbook_path)
+                                    <div class="col-md-6">
+                                        <div class="emp-field-box border-dashed" style="background-color: #F0FAFA;">
+                                            <p class="mb-1 text-muted smallest fw-bold text-uppercase">Bank Document</p>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <span class="small fw-bold text-dark"><i class="bx bx-file me-1"></i> Bank Passbook / Cheque</span>
+                                                <a href="javascript:void(0)" class="btn btn-xs rounded-pill px-3" style="font-size: 0.65rem; background:#127464; color:#fff;" onclick="viewDocumentPopup('{{ asset('storage/'.$bank->passbook_path) }}', 'Bank Passbook')">View</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
                                 </div>
                             @else
                                 <div class="text-center py-5 rounded-4" style="background: #f8fafc; border: 2px dashed #e2e8f0;">
@@ -1023,12 +1059,16 @@
                 <!-- Payroll Tab -->
                 <div class="tab-pane fade" id="payroll">
                     <div class="row g-4">
-                        <!-- Compensation Summary -->
-                        <div class="col-md-7">
-                            <div class="card mb-4 emp-card">
+                        <div class="col-12">
+                            <!-- Compensation Summary - Cards Style -->
+                            <!-- Compensation Summary - Cards Style -->
+                            <div class="card mb-4 emp-card shadow-sm border-0" style="border-radius: 12px;">
                                 <div class="card-body p-4">
+                                    <div class="d-flex align-items-center justify-content-between mb-4 mt-0">
                                         <div class="d-flex align-items-center">
-                                            <i class="bx bx-money me-2 fs-5" style="color: #127464;"></i>
+                                            <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                                                <i class="bx bx-money fs-4 text-primary"></i>
+                                            </div>
                                             <h6 class="mb-0 fw-bold" style="color: #1E293B;">Compensation Details</h6>
                                         </div>
                                         @if ($user->status != \App\Enums\UserAccountStatus::RELIEVED &&
@@ -1039,80 +1079,72 @@
                                             </button>
                                         @endif
                                     </div>
-                                    <div class="row g-4 mb-4">
-                                        <div class="col-md-6">
-                                            <div class="emp-field-box">
-                                                <p class="mb-1 text-muted small fw-bold text-uppercase" style="font-size: 0.65rem;">Base Monthly Salary</p>
-                                                <p class="mb-0 fw-bold fs-5 text-dark">
-                                                    {{ $user->base_salary != null ? $settings->currency_symbol . number_format($user->base_salary, 2) : 'N/A' }}
-                                                </p>
+        
+                                    <div class="row g-3">
+                                        <div class="col-md-3">
+                                            <div class="emp-field-box p-3 rounded-hitech h-100" style="background: #fff; border: 1px solid #eef2f6; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                                                <p class="mb-1 text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">Base Monthly Salary</p>
+                                                <p class="mb-0 fw-bold text-dark h5">₹{{ number_format($user->base_salary) }}</p>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="emp-field-box d-flex align-items-center justify-content-between">
-                                                <div>
-                                                    <p class="mb-1 text-muted small fw-bold text-uppercase" style="font-size: 0.65rem;">Payroll Status</p>
+                                        <div class="col-md-3">
+                                            <div class="emp-field-box p-3 rounded-hitech h-100" style="background: #fff; border: 1px solid #eef2f6; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                                                <p class="mb-1 text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">CTC Offered (Annum)</p>
+                                                <p class="mb-0 fw-bold text-dark h5">₹{{ number_format($user->ctc_offered) }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="emp-field-box p-3 rounded-3 h-100" style="background: #fff; border: 1px solid #eef2f6; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                                                <p class="mb-1 text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">Payroll Status</p>
+                                                <div class="d-flex align-items-center gap-2">
                                                     <p class="mb-0 fw-bold text-success">Active</p>
+                                                    <span class="badge rounded-pill" style="font-size: 0.55rem; background-color: #E0F2F1; color: #127464;">ON CYCLE</span>
                                                 </div>
-                                                <span class="badge rounded-pill px-3" style="background-color: #E0F2F1; color: #127464;">ON CYCLE</span>
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="row g-4">
-                                        <div class="col-md-4">
-                                            <div class="emp-field-box">
-                                                <p class="mb-1 text-muted small fw-bold text-uppercase" style="font-size: 0.65rem;">CTC Offered</p>
-                                                <p class="mb-0 fw-bold text-dark">{{ $user->ctc_offered != null ? $settings->currency_symbol . number_format($user->ctc_offered, 2) : 'N/A' }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="emp-field-box">
-                                                <p class="mb-1 text-muted small fw-bold text-uppercase" style="font-size: 0.65rem;">Pay Frequency</p>
-                                                <p class="mb-0 fw-bold text-dark">Monthly</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="emp-field-box">
-                                                <p class="mb-1 text-muted small fw-bold text-uppercase" style="font-size: 0.65rem;">Effective Date</p>
-                                                <p class="mb-0 fw-bold text-dark">{{ $user->joining_date ?? 'N/A' }}</p>
+                                        <div class="col-md-3">
+                                            <div class="emp-field-box p-3 rounded-3 h-100" style="background: #fff; border: 1px solid #eef2f6; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                                                <p class="mb-1 text-muted small fw-bold text-uppercase" style="font-size: 0.6rem;">Pay Frequency</p>
+                                                <p class="mb-0 fw-bold text-dark h5">Monthly</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Adjustments -->
-                            <div class="card mb-4 emp-card">
-                                <div class="card-body p-4">
-                                        <div class="d-flex align-items-center">
-                                            <i class="bx bx-list-check me-2 fs-5" style="color: #127464;"></i>
-                                            <h6 class="mb-0 fw-bold" style="color: #1E293B;">Allowances & Deductions</h6>
+
+                            <!-- Allowances & Deductions section -->
+                            <div class="card mb-4 emp-card shadow-sm border-0" style="border-radius: 12px;">
+                                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-success bg-opacity-10 p-2 rounded-circle me-3">
+                                            <i class="bx bx-list-check fs-4 text-success"></i>
                                         </div>
-                                        @if($user->status != \App\Enums\UserAccountStatus::RELIEVED && $user->status != \App\Enums\UserAccountStatus::RETIRED)
-                                            <button class="btn btn-sm btn-outline-hitech rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#offcanvasPayrollAdjustment">
-                                                <i class="bx bx-plus me-1"></i> Add Item
-                                            </button>
-                                        @endif
+                                        <h6 class="mb-0 fw-bold" style="color: #1E293B;">Allowances & Deductions</h6>
                                     </div>
-                                    
+                                    @if($user->status != \App\Enums\UserAccountStatus::RELIEVED && $user->status != \App\Enums\UserAccountStatus::RETIRED)
+                                        <button class="btn btn-sm btn-outline-hitech rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#offcanvasPayrollAdjustment" id="addPayrollAdjustment">
+                                            <i class="bx bx-plus me-1"></i> Add Item
+                                        </button>
+                                    @endif
+                                </div>
+                                <div class="card-body p-4">
                                     @if ($user->payrollAdjustments->count() > 0)
                                         <div class="row g-3">
                                         @foreach ($user->payrollAdjustments as $adjustment)
                                             <div class="col-md-6">
-                                                <div class="d-flex align-items-center justify-content-between p-3 rounded-3" style="background-color: #F8FAFC; border: 1px solid #F1F5F9;">
+                                                <div class="d-flex align-items-center justify-content-between p-3 rounded-3" style="background-color: #F8FAFC; border: 1px solid #F1F5F9; cursor: pointer;" onclick='editAdjustment({!! json_encode($adjustment) !!})' data-bs-toggle="modal" data-bs-target="#offcanvasPayrollAdjustment">
                                                     <div class="d-flex align-items-center">
                                                         <div class="bg-white p-2 rounded-pill me-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
                                                             <i class="bx {{ $adjustment->type === 'benefit' ? 'bx-trending-up text-success' : 'bx-trending-down text-danger' }} fs-5"></i>
                                                         </div>
                                                         <div>
                                                             <p class="mb-0 fw-bold small text-dark">{{ $adjustment->name }}</p>
-                                                            <span class="text-muted" style="font-size: 0.65rem;">{{ strtoupper($adjustment->type) }}</span>
+                                                            <span class="text-muted text-uppercase" style="font-size: 0.55rem;">{{ $adjustment->type }}</span>
                                                         </div>
                                                     </div>
                                                     <div class="text-end">
                                                         <p class="mb-0 fw-bold {{ $adjustment->type === 'benefit' ? 'text-success' : 'text-danger' }}">
-                                                            {{ $adjustment->type === 'benefit' ? '+' : '-' }}{{ $settings->currency_symbol }}{{ number_format($adjustment->amount, 2) }}
+                                                            {{ $adjustment->type === 'benefit' ? '+' : '-' }}{{ $settings->currency_symbol }}{{ number_format($adjustment->amount ?? (($adjustment->percentage / 100) * ($user->base_salary ?? 0)), 2) }}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1121,65 +1153,274 @@
                                         </div>
                                     @else
                                         <div class="text-center py-4 rounded-3" style="border: 2px dashed #E2E8F0; background-color: #F8FAFC;">
-                                            <p class="text-muted mb-0 small">No active adjustments or allowances</p>
+                                            <p class="text-muted mb-0 small">No active adjustments or allowances found for this employee.</p>
                                         </div>
                                     @endif
                                 </div>
                             </div>
-                        </div>
 
+                            <!-- Salary Structure Breakdown Toggle -->
+                            <div class="card emp-card shadow-sm border-0 mb-4" style="border-radius: 12px; overflow: hidden;">
+                                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between cursor-pointer" data-bs-toggle="collapse" data-bs-target="#salaryBreakdownCollapse" aria-expanded="false" style="cursor: pointer;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                                            <i class="bx bx-calculator fs-4 text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold" style="color: #1E293B;">Salary Structure Breakdown</h6>
+                                            <p class="mb-0 text-muted smallest italic">Click to view detailed components</p>
+                                        </div>
+                                    </div>
+                                    <i class="bx bx-chevron-down fs-3 text-muted transition-all"></i>
+                                </div>
+                                <div class="collapse" id="salaryBreakdownCollapse">
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            @php
+                                                $ctcAnnum = $user->ctc_offered ?? 0;
+                                                $ctcMonth = $ctcAnnum / 12;
+                                                
+                                                // Breakdown Logic
+                                                $basicMonth = $ctcMonth * 0.5;
+                                                $hraMonth = $ctcMonth * 0.25;
+                                                $medicalMonth = 2500;
+                                                $eduMonth = 200;
+                                                $ltaMonth = 2500;
+                                                
+                                                $sumA = $basicMonth + $hraMonth + $medicalMonth + $eduMonth + $ltaMonth;
+                                                $specialAllowance = max(0, $ctcMonth - $sumA);
+                                                
+                                                $profTax = 200;
+                                                $pfAmount = 1800; // Standard PF
+                                                $deductions = $profTax + $pfAmount;
+                                                
+                                                $netSalary = $ctcMonth - $deductions;
+                                            @endphp
+                                            <table class="table table-hover mb-0 align-middle">
+                                                <thead class="bg-light">
+                                                    <tr>
+                                                        <th class="ps-4 py-3 text-muted smallest fw-bold text-uppercase">Component</th>
+                                                        <th class="text-end py-3 text-muted smallest fw-bold text-uppercase">Per Month ({{ $settings->currency_symbol }})</th>
+                                                        <th class="pe-4 text-end py-3 text-muted smallest fw-bold text-uppercase">Per Annum ({{ $settings->currency_symbol }})</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="ps-4 py-3 fw-semibold text-dark">Basic Salary (50% of CTC)</td>
+                                                        <td class="text-end py-3 fw-bold">{{ number_format($basicMonth, 2) }}</td>
+                                                        <td class="pe-4 text-end py-3 text-muted">{{ number_format($basicMonth * 12, 2) }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4 py-3 fw-semibold text-dark">HRA (25% of CTC)</td>
+                                                        <td class="text-end py-3 fw-bold">{{ number_format($hraMonth, 2) }}</td>
+                                                        <td class="pe-4 text-end py-3 text-muted">{{ number_format($hraMonth * 12, 2) }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4 py-3 fw-semibold text-dark">Medical Reimbursement (Flat)</td>
+                                                        <td class="text-end py-3 fw-bold">{{ number_format($medicalMonth, 2) }}</td>
+                                                        <td class="pe-4 text-end py-3 text-muted">{{ number_format($medicalMonth * 12, 2) }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4 py-3 fw-semibold text-dark">Educational Allowance (Flat)</td>
+                                                        <td class="text-end py-3 fw-bold">{{ number_format($eduMonth, 2) }}</td>
+                                                        <td class="pe-4 text-end py-3 text-muted">{{ number_format($eduMonth * 12, 2) }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4 py-3 fw-semibold text-dark">LTA (Flat)</td>
+                                                        <td class="text-end py-3 fw-bold">{{ number_format($ltaMonth, 2) }}</td>
+                                                        <td class="pe-4 text-end py-3 text-muted">{{ number_format($ltaMonth * 12, 2) }}</td>
+                                                    </tr>
+                                                    <tr class="bg-light bg-opacity-50">
+                                                        <td class="ps-4 py-2 text-muted small italic">Total of (A)</td>
+                                                        <td class="text-end py-2 fw-medium text-muted small">{{ number_format($sumA, 2) }}</td>
+                                                        <td class="pe-4 text-end py-2 text-muted small">{{ number_format($sumA * 12, 2) }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4 py-3 fw-semibold text-dark">Special Allowance (CTC - A)</td>
+                                                        <td class="text-end py-3 fw-bold text-primary">{{ number_format($specialAllowance, 2) }}</td>
+                                                        <td class="pe-4 text-end py-3 text-muted">{{ number_format($specialAllowance * 12, 2) }}</td>
+                                                    </tr>
+                                                    <tr style="background-color: #f8fafc;">
+                                                        <td class="ps-4 py-3 fw-extrabold text-dark">Total Monthly CTC</td>
+                                                        <td class="text-end py-3 fw-extrabold text-dark fs-5">₹{{ number_format($ctcMonth, 2) }}</td>
+                                                        <td class="pe-4 text-end py-3 fw-bold text-dark">₹{{ number_format($ctcAnnum, 2) }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4 py-3 text-danger fw-semibold">Standard PF (DED)</td>
+                                                        <td class="text-end py-3 fw-bold text-danger">-{{ number_format($pfAmount, 2) }}</td>
+                                                        <td class="pe-4 text-end py-3 text-muted">-{{ number_format($pfAmount * 12, 2) }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ps-4 py-3 text-danger fw-semibold">Professional Tax (DED)</td>
+                                                        <td class="text-end py-3 fw-bold text-danger">-{{ number_format($profTax, 2) }}</td>
+                                                        <td class="pe-4 text-end py-3 text-muted">-{{ number_format($profTax * 12, 2) }}</td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot class="bg-dark text-white">
+                                                    <tr>
+                                                        <td class="ps-4 py-3 fw-bold">NET SALARY (TAKE HOME)</td>
+                                                        <td class="text-end py-3 fw-bold fs-5 text-white">₹{{ number_format($netSalary, 2) }}</td>
+                                                        <td class="pe-4 text-end py-3 fw-bold text-white">₹{{ number_format($netSalary * 12, 2) }}</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> {{-- Close for Compensation Detail card --}}
+                        </div>
                     </div>
                 </div>
 
 
                 <!-- KPI Tab -->
                 <div class="tab-pane fade" id="kpi">
-                    <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card border-0 shadow-sm rounded-3 mb-4">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center justify-content-between mb-4">
                                 <div class="d-flex align-items-center">
-                                    <i class="bx bx-line-chart me-2 fs-5" style="color: #127464;"></i>
+                                    <div class="bg-success bg-opacity-10 p-2 rounded-circle me-3">
+                                        <i class="bx bx-line-chart fs-4 text-success"></i>
+                                    </div>
                                     <h6 class="mb-0 fw-bold" style="color: #1E293B;">Performance Metrics (KPIs)</h6>
                                 </div>
-                                <select class="form-select form-select-sm w-auto rounded-pill border-0 bg-light px-3 font-inter" style="font-size: 0.8rem;">
+                                <select class="form-select form-select-sm w-auto rounded-pill border-0 px-3 font-inter form-select-hitech-sm" style="font-size: 0.8rem;">
                                     <option>Last 6 Months</option>
-                                    <option>Year 2025</option>
+                                    <option>All Time</option>
                                 </select>
                             </div>
                             
                             <div class="row g-4">
                                 <div class="col-md-4">
-                                    <div class="p-4 rounded-3 text-center" style="background-color: #F8FAFC; border: 1px solid #F1F5F9;">
-                                        <p class="text-muted small mb-2 uppercase fw-bold tracking-wider font-inter" style="font-size: 0.65rem;">ATTENDANCE</p>
-                                        <h2 class="fw-bold mb-1" style="color: #1E293B; letter-spacing: -1px;">98.5%</h2>
-                                        <span class="badge bg-label-success rounded-pill px-2" style="font-size: 0.65rem;">Above Target</span>
+                                    <div class="emp-field-box text-center h-100 p-4">
+                                        <div class="icon-stat-success mb-3 mx-auto" style="width: 50px; height: 50px; background: #e6f4f1; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid #127464;">
+                                            <i class="bx bxs-calendar-check text-success fs-3" style="color: #127464 !important;"></i>
+                                        </div>
+                                        <h3 class="fw-bold mb-1 text-dark">98.5%</h3>
+                                        <p class="text-success mb-2 fw-medium small"><i class="bx bx-trending-up me-1"></i> Excellent</p>
+                                        <span class="text-uppercase text-muted fw-bold" style="font-size: 0.65rem; letter-spacing: 1px;">Attendance Rate</span>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="p-4 rounded-3 text-center" style="background-color: #F8FAFC; border: 1px solid #F1F5F9;">
-                                        <p class="text-muted small mb-2 uppercase fw-bold tracking-wider font-inter" style="font-size: 0.65rem;">PRODUCTIVITY</p>
-                                        <h2 class="fw-bold mb-1" style="color: #1E293B; letter-spacing: -1px;">4.8<span class="fs-6 text-muted fw-normal">/5</span></h2>
-                                        <span class="badge bg-label-primary rounded-pill px-2" style="font-size: 0.65rem;">Exceeds Exp.</span>
+                                    <div class="emp-field-box text-center h-100 p-4">
+                                         <div class="icon-stat-primary mb-3 mx-auto" style="width: 50px; height: 50px; background: #f0f4ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid #6366f1;">
+                                            <i class="bx bx-target-lock text-primary fs-3" style="color: #6366f1 !important;"></i>
+                                        </div>
+                                        <h3 class="fw-bold mb-1 text-dark">4.8<span class="fs-6 text-muted">/5</span></h3>
+                                        <p class="text-primary mb-2 fw-medium small"><i class="bx bxs-star me-1"></i> Top Performer</p>
+                                        <span class="text-uppercase text-muted fw-bold" style="font-size: 0.65rem; letter-spacing: 1px;">Efficiency Score</span>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="p-4 rounded-3 text-center" style="background-color: #F8FAFC; border: 1px solid #F1F5F9;">
-                                        <p class="text-muted small mb-2 uppercase fw-bold tracking-wider font-inter" style="font-size: 0.65rem;">TASKS COMPLETED</p>
-                                        <h2 class="fw-bold mb-1" style="color: #1E293B; letter-spacing: -1px;">124</h2>
-                                        <span class="text-muted small font-inter" style="font-size: 0.7rem;"><i class="bx bx-up-arrow-alt text-success"></i> 12% vs last month</span>
+                                    <div class="emp-field-box text-center h-100 p-4">
+                                         <div class="icon-stat-info mb-3 mx-auto" style="width: 50px; height: 50px; background: #e0f2fe; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid #0ea5e9;">
+                                            <i class="bx bx-check-double text-info fs-3" style="color: #0ea5e9 !important;"></i>
+                                        </div>
+                                        <h3 class="fw-bold mb-1 text-dark">{{ $user->tasks->where('status', 'completed')->count() }}</h3>
+                                        <p class="text-info mb-2 fw-medium small"><i class="bx bx-list-check me-1"></i> Tasks Closed</p>
+                                        <span class="text-uppercase text-muted fw-bold" style="font-size: 0.65rem; letter-spacing: 1px;">Tasks Completed</span>
                                     </div>
                                 </div>
                             </div>
                             
-                            @if ($addonService->isAddonEnabled(ModuleConstants::SALES_TARGET))
-                                <div class="mt-5 pt-4 border-top">
-                                    <h6 class="fw-bold mb-4" style="color: #1E293B;">Sales Performance</h6>
-                                    @include('salestarget::partials.employee_view_content')
+                            
+                            {{-- Removed Sales Performance as per user request --}}
+                        </div>
+                    </div>
+
+                    <!-- Tasks & Productivity Management -->
+                    <div class="hitech-card-white p-0 overflow-hidden mb-6">
+                        <div class="card-header bg-white py-4 border-bottom d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                                    <i class="bx bx-task fs-4 text-primary"></i>
                                 </div>
+                                <h6 class="mb-0 fw-bold text-dark">Tasks & Productivity Tracking</h6>
+                            </div>
+                            @if(auth()->user()->can('user-edit') || auth()->user()->hasRole('hr'))
+                                <button class="btn btn-sm btn-primary rounded-pill px-4" onclick="resetTaskModal()" data-bs-toggle="modal" data-bs-target="#modalAddTask">
+                                    <i class="bx bx-plus me-1"></i> Assign New Task
+                                </button>
                             @endif
+                        </div>
+                            <div class="table-responsive rounded-3 border" style="background-color: #fff;">
+                                <table class="table table-hover table-borderless mb-0 align-middle">
+                                    <!-- Matching Employee List Table Header -->
+                                    <thead style="background-color: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
+                                        <tr>
+                                            <th class="ps-4 text-muted fw-bold py-3" style="width: 50px; font-size: 0.75rem; text-transform: uppercase;">#</th>
+                                            <th class="text-muted fw-bold py-3" style="font-size: 0.75rem; text-transform: uppercase;">Task Title</th>
+                                            <th class="text-muted fw-bold py-3" style="font-size: 0.75rem; text-transform: uppercase;">Assigned Date</th>
+                                            <th class="text-muted fw-bold py-3" style="font-size: 0.75rem; text-transform: uppercase;">Due Date</th>
+                                            <th class="text-muted fw-bold py-3" style="font-size: 0.75rem; text-transform: uppercase;">Status</th>
+                                            <th class="pe-4 text-end text-muted fw-bold py-3" style="font-size: 0.75rem; text-transform: uppercase;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($user->tasks as $index => $task)
+                                            <tr style="border-bottom: 1px solid #F1F5F9; transition: background-color 0.2s;">
+                                                <td class="ps-4 fw-medium text-muted">{{ $index + 1 }}</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar avatar-sm me-3" style="width: 38px; height: 38px;">
+                                                             <span class="avatar-initial rounded-circle {{ ['bg-label-primary', 'bg-label-success', 'bg-label-info', 'bg-label-warning'][rand(0,3)] }} fw-bold" style="font-size: 0.85rem;">{{ substr($task->title, 0, 2) }}</span>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.9rem;">{{ $task->title }}</h6>
+                                                            <small class="text-muted d-block text-truncate" style="max-width: 200px;">{{ \Illuminate\Support\Str::limit(strip_tags($task->description), 30) }}</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="text-dark small">{{ $task->created_at->format('d M, Y') }}</td>
+                                                <td class="text-dark small">{{ $task->due_date ? $task->due_date->format('d M, Y') : 'N/A' }}</td>
+                                                <td>
+                                                    @php
+                                                        $badgeData = match($task->status) {
+                                                            'new' => ['class' => 'bg-info', 'text' => 'New', 'bg' => '#E0F2FE', 'color' => '#0284C7'],
+                                                            'in_progress' => ['class' => 'bg-warning', 'text' => 'In Progress', 'bg' => '#FEF3C7', 'color' => '#D97706'],
+                                                            'completed' => ['class' => 'bg-success', 'text' => 'Completed', 'bg' => '#DCFCE7', 'color' => '#16A34A'],
+                                                            'closed' => ['class' => 'bg-secondary', 'text' => 'Closed', 'bg' => '#F1F5F9', 'color' => '#475569'],
+                                                            'late' => ['class' => 'bg-danger', 'text' => 'Late', 'bg' => '#FEE2E2', 'color' => '#DC2626'],
+                                                            default => ['class' => 'bg-primary', 'text' => ucfirst($task->status), 'bg' => '#E0E7FF', 'color' => '#4F46E5'],
+                                                        };
+                                                    @endphp
+                                                    <span class="badge rounded-pill fw-bold px-3 py-2" style="background-color: {{ $badgeData['bg'] }}; color: {{ $badgeData['color'] }}; font-size: 0.70rem; letter-spacing: 0.5px;">
+                                                        {{ $badgeData['text'] }}
+                                                    </span>
+                                                </td>
+                                                <td class="pe-4 text-end">
+                                                    <div class="d-flex align-items-center justify-content-end gap-2">
+                                                        <button class="btn btn-sm btn-icon rounded-circle" style="background-color: #F0FAFA; border: 1px solid #127464; color: #127464;" title="View" onclick="viewTaskDetails('{{ addslashes($task->title) }}', '{{ addslashes(strip_tags($task->description)) }}', '{{ $task->due_date ? $task->due_date->format('d M, Y') : 'N/A' }}', '{{ strtoupper(str_replace('_', ' ', $task->status)) }}')">
+                                                            <i class="bx bx-show-alt" style="font-size: 1.1rem;"></i>
+                                                        </button>
+                                                        @if(auth()->user()->can('user-edit') || auth()->user()->hasRole('hr'))
+                                                            <button class="btn btn-sm btn-icon rounded-circle" style="background-color: #F8FAFC; border: 1px solid #E2E8F0; color: #6366f1;" title="Edit" onclick="editTask({{ $task->id }}, '{{ addslashes($task->title) }}', '{{ addslashes($task->description) }}', '{{ $task->due_date ? $task->due_date->toDateString() : '' }}', '{{ $task->type }}')">
+                                                                <i class="bx bx-edit-alt" style="font-size: 1.1rem;"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-icon rounded-circle" style="background-color: #FEF2F2; border: 1px solid #FECACA; color: #EF4444;" title="Delete" onclick="deleteTask({{ $task->id }})">
+                                                                <i class="bx bx-trash" style="font-size: 1.1rem;"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center py-5">
+                                                    <div class="my-4">
+                                                        <i class="bx bx-task text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+                                                        <h6 class="mt-3 text-muted fw-medium">No tasks assigned yet</h6>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
             <!-- /Tab Content -->
 
@@ -1197,8 +1438,8 @@
                 </div>
             </div>
         </div>
-        <!--/ User Content -->
-    </div>
+    </div> {{-- Close for animate__fadeIn --}}
+</div>
 
 
 
@@ -1271,6 +1512,59 @@
         </div>
     </div>
 
+    {{-- NEW: Add Task Modal --}}
+    <div class="modal fade" id="modalAddTask" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content modal-content-hitech">
+                <div class="modal-header modal-header-hitech">
+                    <div class="d-flex align-items-center">
+                        <div class="modal-icon-header me-3">
+                            <i class="bx bx-task-plus"></i>
+                        </div>
+                        <h5 class="modal-title modal-title-hitech mb-0">Assign New Task</h5>
+                    </div>
+                    <button type="button" class="btn-close-hitech" data-bs-dismiss="modal">
+                        <i class="bx bx-x"></i>
+                    </button>
+                </div>
+                <form id="addTaskForm">
+                    @csrf
+                    <input type="hidden" name="userId" value="{{ $user->id }}">
+                    <input type="hidden" name="taskId" id="modalTaskId" value="">
+                    <div class="modal-body modal-body-hitech">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <label class="form-label-hitech" id="taskTitleLabel">Task Title <span class="text-danger">*</span></label>
+                                <input type="text" name="title" id="modalTaskTitle" class="form-control form-control-hitech" placeholder="e.g. Complete Monthly Audit" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label-hitech">Description</label>
+                                <textarea name="description" id="modalTaskDescription" class="form-control form-control-hitech" rows="3" placeholder="Enter task details..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-hitech">Due Date</label>
+                                <input type="date" name="due_date" id="modalTaskDueDate" class="form-control form-control-hitech">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-hitech">Task Type</label>
+                                <select name="type" id="modalTaskType" class="form-select form-select-hitech">
+                                    <option value="open">Open Task</option>
+                                    <option value="site_based">Site Based</option>
+                                    <option value="client_based">Client Based</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 px-4 pb-4 d-flex justify-content-end gap-3">
+                        <button type="button" class="btn btn-hitech-modal-cancel" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-hitech-modal-submit">Create Task <i class="bx bx-check-circle ms-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
     {{-- NEW: Terminate Employee Modal --}}
     <div class="modal fade" id="terminateEmployeeModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -1340,10 +1634,8 @@
     @include('_partials._modals.employees.edit_work_info')
     @include('_partials._modals.employees.edit_compensation_info')
 
-    @if ($addonService->isAddonEnabled(ModuleConstants::PAYROLL))
-        @include('_partials._modals.employees.add_orUpdate_bankAccount')
-        @include('payroll::partials.add_orUpdate_payroll_adjustment')
-    @endif
+    @include('_partials._modals.employees.add_orUpdate_bankAccount')
+    @include('tenant.payroll.partials.add_orUpdate_payroll_adjustment')
 
     {{-- Allot Device Modal --}}
     <div class="modal fade" id="modalAllotDevice" tabindex="-1" aria-hidden="true">
@@ -1359,34 +1651,88 @@
                         @csrf
                         <input type="hidden" name="userId" value="{{ $user->id }}">
                         <div class="row g-3">
+                            <!-- Asset Selection -->
                             <div class="col-12">
-                                <label class="form-label-hitech" for="allotDeviceId">Device ID <span class="text-danger">*</span></label>
-                                <input type="text" name="deviceId" id="allotDeviceId" class="form-control form-control-hitech" placeholder="e.g. DEVICE-001 or IMEI number" required>
+                                <label class="form-label-hitech" for="allotAssetId">Search Available Assets (Inventory)</label>
+                                <select name="assetId" id="allotAssetId" class="form-select form-select-hitech select2">
+                                    <option value="">-- Manual Entry / Not in Inventory --</option>
+                                    @foreach($availableAssets as $asset)
+                                        <option value="{{ $asset->id }}" 
+                                                data-name="{{ $asset->name }}" 
+                                                data-code="{{ $asset->asset_code }}" 
+                                                data-serial="{{ $asset->serial_number }}">
+                                            {{ $asset->asset_code }} - {{ $asset->name }} {{ $asset->serial_number ? "({$asset->serial_number})" : '' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="smallest text-muted mt-1">Selecting an asset from inventory will auto-fill details and update its status.</div>
                             </div>
+
+                            <div class="col-12">
+                                <label class="form-label-hitech" for="allotDeviceId">Device ID / Asset Code <span class="text-danger">*</span></label>
+                                <input type="text" name="deviceId" id="allotDeviceId" class="form-control form-control-hitech" placeholder="e.g. LAPTOP-001 or IMEI" required>
+                            </div>
+
                             <div class="col-md-6">
                                 <label class="form-label-hitech" for="allotDeviceBrand">Brand / Model</label>
-                                <input type="text" name="brand" id="allotDeviceBrand" class="form-control form-control-hitech" placeholder="e.g. Samsung Galaxy A52">
+                                <input type="text" name="brand" id="allotDeviceBrand" class="form-control form-control-hitech" placeholder="e.g. Dell Latitude 5420">
                             </div>
+
                             <div class="col-md-6">
                                 <label class="form-label-hitech" for="allotDeviceType">Device Type</label>
                                 <select name="deviceType" id="allotDeviceType" class="form-select form-select-hitech">
+                                    <option value="laptop">Laptop / PC</option>
                                     <option value="mobile">Mobile Phone</option>
                                     <option value="tablet">Tablet</option>
+                                    <option value="peripheral">Peripheral (Mouse/Keyboard)</option>
                                     <option value="biometric">Biometric Device</option>
-                                    <option value="laptop">Laptop</option>
                                     <option value="other">Other</option>
                                 </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label-hitech" for="allotSerialNumber">Serial Number</label>
+                                <input type="text" name="serialNumber" id="allotSerialNumber" class="form-control form-control-hitech" placeholder="e.g. SN-12345678">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label-hitech" for="allotServiceTag">Service Tag</label>
+                                <input type="text" name="serviceTag" id="allotServiceTag" class="form-control form-control-hitech" placeholder="e.g. TAG-XYZ9">
                             </div>
 
                         </div>
                         <div class="modal-footer border-0 px-0 pb-0 pt-4 d-flex justify-content-end gap-3">
                             <button type="button" class="btn btn-hitech-modal-cancel px-4" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-hitech-modal-submit px-5">
-                                Allot Device <i class="bx bx-check-circle ms-1"></i>
+                                Allot & Sync <i class="bx bx-check-circle ms-1"></i>
                             </button>
                         </div>
                     </form>
                 </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const assetSelect = $('#allotAssetId');
+                        if (assetSelect.length) {
+                            assetSelect.on('change', function() {
+                                const selected = $(this).find(':selected');
+                                if (selected.val()) {
+                                    $('#allotDeviceId').val(selected.data('code') || '');
+                                    $('#allotDeviceBrand').val(selected.data('name') || '');
+                                    $('#allotSerialNumber').val(selected.data('serial') || '');
+                                    
+                                    // Auto-detect type based on name hints if possible
+                                    const name = (selected.data('name') || '').toLowerCase();
+                                    if (name.includes('laptop') || name.includes('thinkpad') || name.includes('macbook') || name.includes('dell')) {
+                                        $('#allotDeviceType').val('laptop');
+                                    } else if (name.includes('phone') || name.includes('samsung') || name.includes('iphone')) {
+                                        $('#allotDeviceType').val('mobile');
+                                    }
+                                }
+                            });
+                        }
+                    });
+                </script>
             </div>
         </div>
     </div>
@@ -1604,7 +1950,7 @@
                 text: "This will remove the biometric lock for this employee's mobile app.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#EF4444',
+                confirmButtonColor: '#127464',
                 cancelButtonColor: '#64748B',
                 confirmButtonText: 'Yes, Unlink it!',
                 customClass: {
@@ -1692,38 +2038,95 @@
         }
 
         // Employee Action Handlers (Status Toggle, Relieve, Retire)
+        // Employee Action Handlers (Status Toggle, Relieve, Retire)
         function toggleEmployeeStatus(userId, isActive) {
-            const status = isActive ? 'activate' : 'deactivate';
+            const actionText = isActive ? 'Activate' : 'Deactivate';
+            const iconClass = isActive ? 'bx-user-check text-success' : 'bx-user-x text-danger';
+            const bgClass = isActive ? 'bg-label-success' : 'bg-label-danger';
+
             Swal.fire({
-                title: `Are you sure you want to ${status} this employee?`,
-                icon: 'warning',
+                html: `
+                    <div class="text-center mb-4">
+                        <div class="mx-auto ${bgClass} rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bx ${iconClass}" style="font-size: 3rem;"></i>
+                        </div>
+                        <h4 class="mb-2 fw-bold text-dark">${actionText} Employee?</h4>
+                        <p class="text-muted small mb-0">Are you sure you want to ${actionText.toLowerCase()} this employee's account access?</p>
+                    </div>
+                `,
                 showCancelButton: true,
-                confirmButtonText: `Yes, ${status}`,
-                customClass: { confirmButton: 'btn btn-primary me-3', cancelButton: 'btn btn-label-secondary' },
-                buttonsStyling: false
+                confirmButtonText: `Yes, ${actionText}`,
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    popup: 'rounded-4 shadow-lg border-0',
+                    confirmButton: `btn ${isActive ? 'btn-success' : 'btn-danger'} rounded-pill px-4 fw-bold shadow-sm`,
+                    cancelButton: 'btn btn-light rounded-pill px-4 fw-bold ms-3'
+                },
+                buttonsStyling: false,
+                showCloseButton: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.post(`/employees/toggleStatus/${userId}`, { _token: '{{ csrf_token() }}', status: isActive ? 1 : 0 }, function(response) {
-                        Swal.fire({ title: 'Updated!', text: response.data, icon: 'success' });
+                        Swal.fire({ 
+                            html: `
+                                <div class="text-center">
+                                    <div class="mx-auto bg-label-success rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                        <i class="bx bx-check text-success" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h4 class="mb-0 fw-bold text-dark">Updated!</h4>
+                                </div>
+                            `, 
+                            timer: 1500, 
+                            showConfirmButton: false,
+                            customClass: { popup: 'rounded-4 shadow-lg border-0' }
+                        });
+                        setTimeout(() => location.reload(), 1500);
                     }).fail(() => Swal.fire('Error', 'Unable to update status', 'error'));
+                } else {
+                    // Reset the toggle if cancelled
+                    document.getElementById('employeeStatusToggle').checked = !isActive;
                 }
             });
         }
 
         function confirmEmployeeAction(action, userId) {
-            const text = action === 'relieve' ? 'relieve' : 'retire';
+            const text = action === 'relieve' ? 'Relieve' : 'Retire';
             Swal.fire({
-                title: `Are you sure you want to ${text} this employee?`,
-                text: 'This action cannot be undone!',
-                icon: 'warning',
+                html: `
+                    <div class="text-center mb-4">
+                        <div class="mx-auto bg-label-warning rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bx bx-error text-warning" style="font-size: 3rem;"></i>
+                        </div>
+                        <h4 class="mb-2 fw-bold text-dark">${text} Employee?</h4>
+                        <p class="text-muted small mb-0">This action cannot be undone!</p>
+                    </div>
+                `,
                 showCancelButton: true,
                 confirmButtonText: `Yes, ${text}`,
-                customClass: { confirmButton: 'btn btn-primary me-3', cancelButton: 'btn btn-label-secondary' },
-                buttonsStyling: false
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    popup: 'rounded-4 shadow-lg border-0',
+                    confirmButton: 'btn btn-warning rounded-pill px-4 fw-bold shadow-sm',
+                    cancelButton: 'btn btn-light rounded-pill px-4 fw-bold ms-3'
+                },
+                buttonsStyling: false,
+                showCloseButton: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.post(`/employees/${action}/${userId}`, { _token: '{{ csrf_token() }}' }, function(response) {
-                        Swal.fire({ title: 'Success!', text: response.data, icon: 'success' });
+                        Swal.fire({ 
+                            html: `
+                                <div class="text-center">
+                                    <div class="mx-auto bg-label-success rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                        <i class="bx bx-check text-success" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h4 class="mb-0 fw-bold text-dark">Success!</h4>
+                                </div>
+                            `, 
+                            timer: 1500, 
+                            showConfirmButton: false,
+                            customClass: { popup: 'rounded-4 shadow-lg border-0' }
+                        });
                         setTimeout(() => location.reload(), 2000);
                     }).fail(() => Swal.fire('Error', `Unable to ${text} employee`, 'error'));
                 }
@@ -1733,20 +2136,23 @@
         function loadBankDetails() {
             console.log("loadBankDetails called for user:", user?.id);
             try {
-                if(!user || !user.bank_account) {
+                // Support both snake_case and camelCase (Laravel relation vs serialization)
+                const bank = user.bank_account || user.bankAccount;
+                
+                if(!user || !bank) {
                     console.log("No bank account found or user object incomplete.");
                     // Reset fields for fresh entry
                     $('#bankName, #bankCode, #accountName, #accountNumber, #confirmAccountNumber, #branchName, #branchCode').val('');
                     return;
                 }
-                console.log("Found bank account:", user.bank_account);
-                $('#bankName').val(user.bank_account.bank_name || '');
-                $('#bankCode').val(user.bank_account.bank_code || '');
-                $('#accountName').val(user.bank_account.account_name || '');
-                $('#accountNumber').val(user.bank_account.account_number || '');
-                $('#confirmAccountNumber').val(user.bank_account.account_number || '');
-                $('#branchName').val(user.bank_account.branch_name || '');
-                $('#branchCode').val(user.bank_account.branch_code || '');
+                console.log("Found bank account:", bank);
+                $('#bankName').val(bank.bank_name || '');
+                $('#bankCode').val(bank.bank_code || '');
+                $('#accountName').val(bank.account_name || '');
+                $('#accountNumber').val(bank.account_number || '');
+                $('#confirmAccountNumber').val(bank.account_number || '');
+                $('#branchName').val(bank.branch_name || '');
+                $('#branchCode').val(bank.branch_code || '');
                 console.log("Bank fields populated.");
             } catch (e) {
                 console.error("Critical error in loadBankDetails:", e);
@@ -1843,7 +2249,129 @@
                     });
                 }
             });
+            
+            // Task Management Handlers
+            const addTaskForm = document.getElementById('addTaskForm');
+            if (addTaskForm) {
+                addTaskForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const btn = this.querySelector('button[type="submit"]');
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
+                    
+                    const taskId = document.getElementById('modalTaskId').value;
+                    const url = taskId ? `/tasks/update/${taskId}` : '{{ route('tasks.store') }}';
+                    
+                    $.post(url, $(this).serialize() + '&_token={{ csrf_token() }}', function(resp) {
+                        if(resp.success) {
+                            Swal.fire({ icon: 'success', title: taskId ? 'Task Updated' : 'Task Assigned', text: resp.message, timer: 1500, showConfirmButton: false });
+                            setTimeout(() => location.reload(), 1500);
+                        }
+                    }).fail(xhr => {
+                        btn.disabled = false;
+                        btn.innerHTML = taskId ? 'Update Task <i class="bx bx-check-circle ms-1"></i>' : 'Create Task <i class="bx bx-check-circle ms-1"></i>';
+                        Swal.fire('Error', xhr.responseJSON?.message || 'Failed to process task', 'error');
+                    });
+                });
+            }
+
+            // Function to reset task modal for new task
+            window.resetTaskModal = function() {
+                $('#modalTaskId').val('');
+                $('#modalTaskTitle').val('');
+                $('#modalTaskDescription').val('');
+                $('#modalTaskDueDate').val('');
+                $('#modalTaskType').val('open');
+                $('.modal-title-hitech').text('Assign New Task');
+                $('#addTaskForm button[type="submit"]').html('Create Task <i class="bx bx-check-circle ms-1"></i>');
+            };
+
+            // Function to populate task modal for editing
+            window.editTask = function(id, title, description, dueDate, type) {
+                $('#modalTaskId').val(id);
+                $('#modalTaskTitle').val(title);
+                $('#modalTaskDescription').val(description);
+                $('#modalTaskDueDate').val(dueDate);
+                $('#modalTaskType').val(type);
+                $('.modal-title-hitech').text('Edit Task');
+                $('#addTaskForm button[type="submit"]').html('Update Task <i class="bx bx-check-circle ms-1"></i>');
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('modalAddTask')).show();
+            };
         });
+
+        // Global functions for task actions (outside DOMContentLoaded to be accessible via onclick)
+        function updateTaskStatus(taskId, status) {
+            Swal.fire({
+                title: 'Update Task Status?',
+                text: `Set this task to ${status.replace('_', ' ')}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Update',
+                customClass: { confirmButton: 'btn btn-primary me-3', cancelButton: 'btn btn-label-secondary' },
+                buttonsStyling: false
+            }).then(res => {
+                if (res.isConfirmed) {
+                    $.post(`/tasks/updateStatus/${taskId}`, { _token: '{{ csrf_token() }}', status: status }, function(resp) {
+                        if(resp.success) {
+                            Swal.fire({ icon: 'success', title: 'Updated!', text: resp.message, timer: 1000, showConfirmButton: false });
+                            setTimeout(() => location.reload(), 1000);
+                        }
+                    }).fail(() => Swal.fire('Error', 'Unable to update status', 'error'));
+                }
+            });
+        }
+
+        function deleteTask(taskId) {
+            Swal.fire({
+                html: `
+                    <div class="text-center mb-4">
+                        <div class="mx-auto bg-label-danger rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bx bx-trash text-danger" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h4 class="mb-2 fw-bold text-dark">Delete Task?</h4>
+                        <p class="text-muted small mb-0">This action cannot be undone!</p>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    popup: 'rounded-4 shadow-lg border-0',
+                    confirmButton: 'btn btn-danger rounded-pill px-4 fw-bold shadow-sm',
+                    cancelButton: 'btn btn-light rounded-pill px-4 fw-bold ms-3'
+                },
+                buttonsStyling: false,
+                showCloseButton: false,
+                focusCancel: true
+            }).then(res => {
+                if (res.isConfirmed) {
+                    $.ajax({
+                        url: `/tasks/delete/${taskId}`,
+                        type: 'DELETE',
+                        data: { _token: '{{ csrf_token() }}' },
+                        success: function(resp) {
+                            if(resp.success) {
+                                Swal.fire({ 
+                                    html: `
+                                        <div class="text-center">
+                                            <div class="mx-auto bg-label-success rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                                <i class="bx bx-check text-success" style="font-size: 3rem;"></i>
+                                            </div>
+                                            <h4 class="mb-0 fw-bold text-dark">Deleted!</h4>
+                                        </div>
+                                    `, 
+                                    timer: 1500, 
+                                    showConfirmButton: false,
+                                    customClass: { popup: 'rounded-4 shadow-lg border-0' }
+                                });
+                                setTimeout(() => location.reload(), 1500);
+                            }
+                        },
+                        error: () => Swal.fire('Error', 'Unable to delete task', 'error')
+                    });
+                }
+            });
+        }
 
     </script>
     @vite(['resources/js/main-helper.js', 'resources/assets/js/app/employee-view.js'])

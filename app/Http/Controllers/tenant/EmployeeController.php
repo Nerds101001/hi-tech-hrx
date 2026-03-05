@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\tenant;
 
+use App\Http\Controllers\Controller;
 use App\ApiClasses\Error;
 use App\ApiClasses\Success;
 use App\Enums\CommonStatus;
@@ -11,7 +12,7 @@ use App\Enums\Status;
 use App\Enums\TargetType;
 use App\Enums\TerminationType;
 use App\Enums\UserAccountStatus;
-use App\Http\Controllers\Controller;
+use App\Models\Asset;
 use App\Models\BankAccount;
 use App\Models\Designation;
 use App\Models\DocumentType;
@@ -104,13 +105,20 @@ class EmployeeController extends Controller
       'accountName' => 'required|string|max:255',
       'accountNumber' => 'required|string|max:255',
       'branchName' => 'nullable|string|max:255',
-      'branchCode' => 'nullable|string|max:255'
+      'branchCode' => 'nullable|string|max:255',
+      'bankDocument' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120'
     ]);
 
     $user = User::find($validated['userId']);
+    $path = null;
 
-    $bank = BankAccount::where('user_id', $user->id)
-      ->first();
+    if ($request->hasFile('bankDocument')) {
+      $file = $request->file('bankDocument');
+      $fileName = time() . '_' . $file->getClientOriginalName();
+      $path = $file->storeAs('bank_documents', $fileName, 'public');
+    }
+
+    $bank = BankAccount::where('user_id', $user->id)->first();
 
     if ($bank) {
       $bank->bank_name = $validated['bankName'];
@@ -119,6 +127,9 @@ class EmployeeController extends Controller
       $bank->account_number = $validated['accountNumber'];
       $bank->branch_name = $validated['branchName'] ?? $bank->branch_name;
       $bank->branch_code = $validated['branchCode'] ?? $bank->branch_code;
+      if ($path) {
+          $bank->passbook_path = $path;
+      }
       $bank->save();
     } else {
       $user->bankAccount()->create([
@@ -128,6 +139,7 @@ class EmployeeController extends Controller
         'account_number' => $validated['accountNumber'],
         'branch_name' => $validated['branchName'] ?? null,
         'branch_code' => $validated['branchCode'] ?? null,
+        'passbook_path' => $path
       ]);
     }
 
@@ -276,18 +288,53 @@ class EmployeeController extends Controller
       'deviceId'   => 'required|string|max:255',
       'brand'      => 'nullable|string|max:255',
       'deviceType' => 'nullable|string|max:100',
+      'assetId'    => 'nullable|exists:assets,id',
+      'serialNumber' => 'nullable|string|max:255',
+      'serviceTag'   => 'nullable|string|max:255',
     ]);
 
+    // 1. Sync with Asset Management
+    if (!empty($validated['assetId'])) {
+      $asset = \App\Models\Asset::find($validated['assetId']);
+      if ($asset) {
+        $asset->update([
+          'assigned_to' => $validated['userId'],
+          'status'      => 'assigned',
+          'serial_number' => $validated['serialNumber'] ?? $asset->serial_number,
+          'notes'         => $validated['serviceTag'] ?? $asset->notes, // Using notes for service tag
+        ]);
+      }
+    } else {
+      // Create new asset record for this allotment if not from inventory
+      \App\Models\Asset::create([
+        'asset_code'    => 'AST-' . strtoupper(uniqid()),
+        'name'          => $validated['brand'] ?? 'Manual Allotment',
+        'serial_number' => $validated['serialNumber'] ?? 'N/A',
+        'notes'         => $validated['serviceTag'] ?? 'N/A',
+        'assigned_to'   => $validated['userId'],
+        'status'        => 'assigned',
+        'purchase_date' => now(),
+        'created_by'    => auth()->id(),
+      ]);
+    }
+
+    // 2. Update UserDevice tracking record
     UserDevice::updateOrCreate(
       ['user_id' => $validated['userId']],
       [
         'device_id'   => $validated['deviceId'],
-        'brand'       => $validated['brand'] ?? null,
-        'device_type' => $validated['deviceType'] ?? 'mobile',
+        'brand'       => $validated['brand'] ?? 'Company Asset',
+        'device_type' => $validated['deviceType'] ?? 'company_device',
+        'board'       => 'N/A',
+        'sdk_version' => 'N/A',
+        'model'       => $validated['brand'] ?? 'N/A',
+        'address'     => 'Allotted via Portal',
+        'updated_by_id' => auth()->id(),
+        'tenant_id'   => auth()->user()->tenant_id,
       ]
     );
 
-    return redirect()->back()->with('success', 'Device allotted successfully');
+    return redirect()->back()->with('success', 'Device/Asset allotted successfully');
   }
 
 
@@ -387,6 +434,7 @@ class EmployeeController extends Controller
     $validated = $request->validate([
       'id' => 'required|exists:users,id',
       'baseSalary' => 'nullable|numeric',
+      'ctcOffered' => 'nullable|numeric',
       'availableLeaveCount' => 'nullable|numeric',
     ]);
 
@@ -394,6 +442,10 @@ class EmployeeController extends Controller
 
     if ($user->base_salary != $validated['baseSalary']) {
       $user->base_salary = $validated['baseSalary'];
+    }
+
+    if ($user->ctc_offered != $validated['ctcOffered']) {
+      $user->ctc_offered = $validated['ctcOffered'];
     }
 
     if ($user->available_leave_count != $validated['availableLeaveCount']) {
@@ -1074,6 +1126,9 @@ class EmployeeController extends Controller
       ->with('designation')
       ->with('salesTargets')
       ->with('bankAccount')
+      ->with('tasks')
+      ->with('payrollAdjustments')
+      ->with('documentRequests')
       ->first();
 
     $documentTypes = DocumentType::where('status', CommonStatus::ACTIVE)
@@ -1083,11 +1138,16 @@ class EmployeeController extends Controller
       ->select('id', 'name', 'code')
       ->get();
 
+    $availableAssets = \App\Models\Asset::where('status', 'available')
+      ->select('id', 'name', 'asset_code', 'serial_number')
+      ->get();
+
     return view('tenant.employees.view', [
-      'user' => $user,
+      'user'          => $user,
       'documentTypes' => $documentTypes,
-      'leaveTypes' => $leaveTypes,
-      'role' => $user->getRoleNames()->first() ?? 'Employee',
+      'leaveTypes'    => $leaveTypes,
+      'availableAssets' => $availableAssets,
+      'role'          => $user->getRoleNames()->first() ?? 'Employee',
     ]);
   }
 
@@ -1552,6 +1612,9 @@ class EmployeeController extends Controller
     $user = User::findOrFail($id);
 
     if ($user->status !== UserAccountStatus::ONBOARDING_SUBMITTED) {
+      if (request()->ajax()) {
+        return response()->json(['success' => false, 'message' => 'User is not in a submittable state.']);
+      }
       return redirect()->back()->with('error', 'User is not in a submittable state.');
     }
 
@@ -1560,18 +1623,25 @@ class EmployeeController extends Controller
       // 1. Update Status to Active
       $user->status = UserAccountStatus::ACTIVE;
       $user->email_verified_at = now(); // Mark as verified since HR approved
+      $user->onboarding_resubmission_notes = null; // Clear notes upon approval
       $user->save();
 
       // 2. Send Approval Notification
-      $user->notify(new OnboardingStatusChanged('approved'));
+      $user->notify(new OnboardingStatusChanged($user, 'approved'));
 
       DB::commit();
 
+      if (request()->ajax()) {
+        return response()->json(['success' => true, 'message' => 'Onboarding approved! ' . $user->name . ' is now active.']);
+      }
       return redirect()->route('employees.index')->with('success', 'Onboarding approved! ' . $user->name . ' is now an active employee.');
 
     } catch (\Exception $e) {
       DB::rollBack();
       Log::error('Onboarding Approval Error: ' . $e->getMessage());
+      if (request()->ajax()) {
+        return response()->json(['success' => false, 'message' => 'Failed to approve onboarding.']);
+      }
       return redirect()->back()->with('error', 'Failed to approve onboarding.');
     }
   }
@@ -1595,15 +1665,21 @@ class EmployeeController extends Controller
       $user->save();
 
       // 2. Send Resubmission Notification
-      $user->notify(new OnboardingStatusChanged('resubmission', $request->notes));
+      $user->notify(new OnboardingStatusChanged($user, 'resubmission', $request->notes));
 
       DB::commit();
 
+      if ($request->ajax()) {
+        return response()->json(['success' => true, 'message' => 'Resubmission request sent to ' . $user->email]);
+      }
       return redirect()->route('employees.index')->with('success', 'Resubmission request sent to ' . $user->email);
 
     } catch (\Exception $e) {
       DB::rollBack();
       Log::error('Onboarding Resubmission Error: ' . $e->getMessage());
+      if ($request->ajax()) {
+        return response()->json(['success' => false, 'message' => 'Failed to request resubmission.']);
+      }
       return redirect()->back()->with('error', 'Failed to request resubmission.');
     }
   }

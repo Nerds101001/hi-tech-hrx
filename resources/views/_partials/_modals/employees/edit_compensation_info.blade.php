@@ -21,13 +21,27 @@
 
           <div class="row g-4">
             <div class="col-md-6">
-              <label class="form-label-hitech" for="baseSalary">@lang('Base Monthly Salary')</label>
-              <input type="number" name="baseSalary" id="baseSalary" class="form-control form-control-hitech" placeholder="0.00" value="{{$user->base_salary}}" />
+              <label class="form-label-hitech" for="baseSalary">@lang('Base Monthly Salary') (₹)</label>
+              <div class="input-group input-group-hitech">
+                <span class="input-group-text"><i class="bx bx-rupee"></i></span>
+                <input type="number" name="baseSalary" id="baseSalary" class="form-control" placeholder="0.00" value="{{$user->base_salary}}" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label-hitech" for="ctcOffered">@lang('Annual CTC Offered') (₹)</label>
+              <div class="input-group input-group-hitech">
+                <span class="input-group-text"><i class="bx bx-trending-up"></i></span>
+                <input type="number" name="ctcOffered" id="ctcOffered" class="form-control" placeholder="0.00" value="{{$user->ctc_offered}}" />
+              </div>
             </div>
             
-            <div class="col-md-6">
+            <div class="col-md-12">
               <label class="form-label-hitech" for="availableLeaveCount">@lang('Available Leave Count')</label>
-              <input type="number" name="availableLeaveCount" id="availableLeaveCount" class="form-control form-control-hitech" placeholder="0" value="{{$user->available_leave_count}}" />
+              <div class="input-group input-group-hitech">
+                <span class="input-group-text"><i class="bx bx-calendar-event"></i></span>
+                <input type="number" name="availableLeaveCount" id="availableLeaveCount" class="form-control" placeholder="0" value="{{$user->available_leave_count}}" />
+              </div>
             </div>
           </div>
 

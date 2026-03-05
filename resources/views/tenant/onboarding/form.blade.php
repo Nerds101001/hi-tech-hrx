@@ -499,6 +499,17 @@
                 <p>Please provide your basic family and personal details.</p>
               </div>
               <div class="card-body-hitech">
+                @if ($user->onboarding_resubmission_notes)
+                  <div class="alert alert-warning border-0 d-flex align-items-start mb-4" style="background-color: #fffbeb; border-radius: 16px; padding: 1.5rem; border: 1px solid #fef3c7 !important;">
+                    <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; min-width: 40px; background-color: #f59e0b !important; color: white;">
+                      <i class="bx bx-error-alt fs-4"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-extrabold text-warning mb-1" style="color: #92400e !important;">Action Required: HR Feedback</h6>
+                      <p class="mb-0 small text-dark fw-semibold" style="line-height: 1.5;">{{ $user->onboarding_resubmission_notes }}</p>
+                    </div>
+                  </div>
+                @endif
                 
                 <h4 class="section-title">Core Identity</h4>
                 <div class="row g-4 mb-4">
@@ -595,6 +606,17 @@
                 <p>How we can reach you and your emergency contacts.</p>
               </div>
               <div class="card-body-hitech">
+                @if ($user->onboarding_resubmission_notes)
+                  <div class="alert alert-warning border-0 d-flex align-items-start mb-4" style="background-color: #fffbeb; border-radius: 16px; padding: 1.5rem; border: 1px solid #fef3c7 !important;">
+                    <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; min-width: 40px; background-color: #f59e0b !important; color: white;">
+                      <i class="bx bx-error-alt fs-4"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-extrabold text-warning mb-1" style="color: #92400e !important;">Action Required: HR Feedback</h6>
+                      <p class="mb-0 small text-dark fw-semibold" style="line-height: 1.5;">{{ $user->onboarding_resubmission_notes }}</p>
+                    </div>
+                  </div>
+                @endif
                 
                 <h4 class="section-title">Contact Methods</h4>
                 <div class="row g-4 mb-4">
@@ -711,6 +733,17 @@
                 <p>Details for your monthly salary disbursement.</p>
               </div>
               <div class="card-body-hitech">
+                @if ($user->onboarding_resubmission_notes)
+                  <div class="alert alert-warning border-0 d-flex align-items-start mb-4" style="background-color: #fffbeb; border-radius: 16px; padding: 1.5rem; border: 1px solid #fef3c7 !important;">
+                    <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; min-width: 40px; background-color: #f59e0b !important; color: white;">
+                      <i class="bx bx-error-alt fs-4"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-extrabold text-warning mb-1" style="color: #92400e !important;">Action Required: HR Feedback</h6>
+                      <p class="mb-0 small text-dark fw-semibold" style="line-height: 1.5;">{{ $user->onboarding_resubmission_notes }}</p>
+                    </div>
+                  </div>
+                @endif
                 <div class="security-notice">
                     <i class="bx bxs-shield-check security-notice-icon"></i>
                     <div>
@@ -755,6 +788,17 @@
                 <p>Upload digital copies of your identification certificates.</p>
               </div>
               <div class="card-body-hitech">
+                @if ($user->onboarding_resubmission_notes)
+                  <div class="alert alert-warning border-0 d-flex align-items-start mb-4" style="background-color: #fffbeb; border-radius: 16px; padding: 1.5rem; border: 1px solid #fef3c7 !important;">
+                    <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; min-width: 40px; background-color: #f59e0b !important; color: white;">
+                      <i class="bx bx-error-alt fs-4"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-extrabold text-warning mb-1" style="color: #92400e !important;">Action Required: HR Feedback</h6>
+                      <p class="mb-0 small text-dark fw-semibold" style="line-height: 1.5;">{{ $user->onboarding_resubmission_notes }}</p>
+                    </div>
+                  </div>
+                @endif
                 
                 <h4 class="section-title">Profile Photo</h4>
                 <div class="row g-4 mb-4">
@@ -839,6 +883,17 @@
                 <p>Please verify all information before final submission.</p>
               </div>
               <div class="card-body-hitech">
+                @if ($user->onboarding_resubmission_notes)
+                  <div class="alert alert-warning border-0 d-flex align-items-start mb-4" style="background-color: #fffbeb; border-radius: 16px; padding: 1.5rem; border: 1px solid #fef3c7 !important;">
+                    <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; min-width: 40px; background-color: #f59e0b !important; color: white;">
+                      <i class="bx bx-error-alt fs-4"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-extrabold text-warning mb-1" style="color: #92400e !important;">Action Required: HR Feedback</h6>
+                      <p class="mb-0 small text-dark fw-semibold" style="line-height: 1.5;">{{ $user->onboarding_resubmission_notes }}</p>
+                    </div>
+                  </div>
+                @endif
                 <div class="security-notice mb-8">
                     <i class="bx bx-check-shield security-notice-icon"></i>
                     <div>

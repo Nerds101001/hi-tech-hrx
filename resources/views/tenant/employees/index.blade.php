@@ -209,13 +209,13 @@
                 <div class="col-6">
                   <div class="detail-item">
                     <span class="label d-block text-muted text-uppercase fw-bold mb-1" style="font-size: 0.6rem; letter-spacing: 0.05em;">Department</span>
-                    <span class="value text-truncate d-block fw-semibold text-heading small">{{ $user->team->name ?? 'No Team' }}</span>
+                    <span class="value text-truncate d-block fw-semibold text-heading small">{{ $user->team?->name ?? 'No Team' }}</span>
                   </div>
                 </div>
                 <div class="col-6">
                   <div class="detail-item">
                     <span class="label d-block text-muted text-uppercase fw-bold mb-1" style="font-size: 0.6rem; letter-spacing: 0.05em;">Designation</span>
-                    <span class="value text-truncate d-block fw-semibold text-heading small">{{ $user->designation->name ?? 'Staff Member' }}</span>
+                    <span class="value text-truncate d-block fw-semibold text-heading small">{{ $user->designation?->name ?? 'Staff Member' }}</span>
                   </div>
                 </div>
                 <div class="col-12 mt-3 pt-3 border-top" style="border-color: rgba(0,0,0,0.05) !important;">

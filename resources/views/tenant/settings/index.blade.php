@@ -725,7 +725,7 @@
 @endsection
 
 @if($addonService->isAddonEnabled(ModuleConstants::PAYROLL))
-  @include('payroll::partials.add_orUpdate_payroll_adjustment_global')
+  @include('tenant.payroll.partials.add_orUpdate_payroll_adjustment_global')
 @endif
 @section('page-script')
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"

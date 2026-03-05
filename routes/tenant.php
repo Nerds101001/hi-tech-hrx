@@ -10,6 +10,7 @@ use App\Http\Controllers\language\LanguageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\tenant\AttendanceController;
+use App\Http\Controllers\tenant\AttendanceImportController;
 use App\Http\Controllers\tenant\ClientController;
 use App\Http\Controllers\tenant\DashboardController;
 use App\Http\Controllers\tenant\DepartmentsController;
@@ -38,6 +39,7 @@ use App\Http\Controllers\tenant\SettingsController;
 use App\Http\Controllers\tenant\ShiftController;
 use App\Http\Controllers\tenant\SOSController;
 use App\Http\Controllers\tenant\TeamController;
+use App\Http\Controllers\tenant\TaskController;
 use App\Http\Controllers\tenant\VisitController;
 use App\Http\Controllers\tenant\AssetController;
 use App\Http\Controllers\tenant\AssetCategoryController;
@@ -233,6 +235,7 @@ Route::middleware([
     Route::prefix('attendance')->name('attendance.')->group(function () {
       Route::get('', [AttendanceController::class, 'index'])->name('index');
       Route::get('indexAjax', [AttendanceController::class, 'indexAjax'])->name('indexAjax');
+      Route::post('import', [AttendanceImportController::class, 'import'])->name('import');
     });
 
     // Visits
@@ -274,6 +277,13 @@ Route::middleware([
       Route::get('getListAjax', [LoanRequestController::class, 'getListAjax'])->name('getListAjax');
       Route::post('actionAjax', [LoanRequestController::class, 'actionAjax'])->name('actionAjax');
       Route::get('getByIdAjax/{id}', [LoanRequestController::class, 'getByIdAjax'])->name('getByIdAjax');
+    });
+
+    // Task Management
+    Route::prefix('tasks')->name('tasks.')->group(function () {
+      Route::post('store', [TaskController::class, 'store'])->name('store');
+      Route::post('updateStatus/{id}', [TaskController::class, 'updateStatus'])->name('updateStatus');
+      Route::delete('delete/{id}', [TaskController::class, 'destroy'])->name('destroy');
     });
 
 

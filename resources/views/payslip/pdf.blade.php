@@ -107,19 +107,43 @@
 <table class="details-table">
   <tr>
     <th>Basic Salary</th>
-    <td>{{$currencySymbol}}{{ number_format($payslip->basic_salary, 2) }}</td>
+    <td>{{$currencySymbol}}{{ number_format($basicMonth, 2) }}</td>
   </tr>
   <tr>
-    <th>Total Benefits</th>
-    <td>{{$currencySymbol}}{{ number_format($payslip->total_benefits, 2) }}</td>
+    <th>HRA</th>
+    <td>{{$currencySymbol}}{{ number_format($hraMonth, 2) }}</td>
   </tr>
   <tr>
-    <th>Total Deductions</th>
-    <td>{{$currencySymbol}}{{ number_format($payslip->total_deductions, 2) }}</td>
+    <th>Medical Allowance</th>
+    <td>{{$currencySymbol}}{{ number_format($medicalMonth, 2) }}</td>
   </tr>
   <tr>
-    <th>Net Salary</th>
-    <td><strong>{{$currencySymbol}}{{ number_format($payslip->net_salary, 2) }}</strong></td>
+    <th>Education Allowance</th>
+    <td>{{$currencySymbol}}{{ number_format($eduMonth, 2) }}</td>
+  </tr>
+  <tr>
+    <th>LTA</th>
+    <td>{{$currencySymbol}}{{ number_format($ltaMonth, 2) }}</td>
+  </tr>
+  <tr>
+    <th>Special Allowance</th>
+    <td>{{$currencySymbol}}{{ number_format($specialAllowance, 2) }}</td>
+  </tr>
+  <tr style="background-color: #f9f9f9;">
+    <th><strong>Gross Earnings</strong></th>
+    <td><strong>{{$currencySymbol}}{{ number_format($basicMonth + $hraMonth + $medicalMonth + $eduMonth + $ltaMonth + $specialAllowance, 2) }}</strong></td>
+  </tr>
+  <tr>
+    <th>Provident Fund</th>
+    <td>-{{$currencySymbol}}{{ number_format($pfAmount, 2) }}</td>
+  </tr>
+  <tr>
+    <th>Professional Tax</th>
+    <td>-{{$currencySymbol}}{{ number_format($profTax, 2) }}</td>
+  </tr>
+  <tr style="background-color: #f2f2f2;">
+    <th><strong>Net Salary (Take Home)</strong></th>
+    <td><strong>{{$currencySymbol}}{{ number_format($netSalary, 2) }}</strong></td>
   </tr>
 </table>
 

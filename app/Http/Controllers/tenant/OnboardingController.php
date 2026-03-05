@@ -33,7 +33,7 @@ class OnboardingController extends Controller
             return redirect()->route('onboarding.status');
         }
 
-        if ($userStatus !== UserAccountStatus::ONBOARDING->value) {
+        if ($userStatus !== UserAccountStatus::ONBOARDING->value && $userStatus !== UserAccountStatus::ONBOARDING_REQUESTED->value) {
             return redirect()->route('tenant.dashboard');
         }
 

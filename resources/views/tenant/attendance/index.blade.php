@@ -334,8 +334,14 @@
           </div>
 
           {{-- Export Icon --}}
-          <button type="button" class="btn btn-hitech-icon shadow-sm" onclick="exportData()" title="Export Data">
+          <button type="button" class="btn btn-hitech-icon shadow-sm me-2" onclick="exportData()" title="Export Data">
             <i class="bx bx-download fs-5"></i>
+          </button>
+
+          {{-- Bulk Import Button --}}
+          <button type="button" class="btn btn-hitech-export shadow-sm" data-bs-toggle="modal" data-bs-target="#importAttendanceModal">
+            <i class="bx bx-upload fs-5 me-2"></i>
+            <span>Bulk Import</span>
           </button>
         </div>
       </div>
@@ -507,3 +513,80 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endsection
+
+{{-- Import Attendance Modal --}}
+<div class="modal fade" id="importAttendanceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+      <div class="modal-header bg-light-soft py-4 px-5">
+        <div class="d-flex align-items-center">
+            <div class="bg-label-teal p-2 rounded-3 me-3">
+                <i class="bx bx-upload fs-3 text-teal"></i>
+            </div>
+            <div>
+                <h5 class="modal-title fw-bold text-dark mb-0">Bulk Attendance Import</h5>
+                <small class="text-muted">Upload Excel or CSV file to sync records</small>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-5">
+        <form action="{{ route('attendance.import') }}" method="POST" enctype="multipart/form-data">
+          @csrf
+          <div class="mb-5 text-center">
+            <div class="p-5 border-2 border-dashed rounded-4 bg-light cursor-pointer hover-bg-teal-soft transition-all" 
+                 onclick="document.getElementById('importFile').click()">
+                <i class="bx bx-cloud-upload display-4 text-teal mb-3"></i>
+                <h6 class="fw-bold text-dark mb-1">Click to upload or drag & drop</h6>
+                <p class="text-muted small mb-0">Supports XLSX, XLS, and CSV (Max 5MB)</p>
+                <input type="file" id="importFile" name="file" class="d-none" onchange="updateFileName(this)" accept=".xlsx,.xls,.csv" required>
+            </div>
+            <div id="fileNameDisplay" class="mt-3 text-teal fw-medium d-none"></div>
+          </div>
+
+          <div class="bg-label-info p-4 rounded-3 mb-4">
+              <div class="d-flex">
+                  <i class="bx bx-info-circle fs-4 me-3 mt-1"></i>
+                  <div>
+                      <h6 class="fw-bold mb-1">Spreadsheet Template</h6>
+                      <p class="small mb-0">Ensure your columns are exactly: <br>
+                         <code>employee_code</code>, <code>date</code>, <code>check_in</code>, <code>check_out</code>, <code>status</code>
+                      </p>
+                  </div>
+              </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-3 mt-5">
+            <button type="button" class="btn btn-label-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-teal px-5 py-2 fw-bold shadow-sm">
+                <i class="bx bx-check-circle me-2"></i>Start Import
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.text-teal { color: #005a5a !important; }
+.bg-label-teal { background-color: rgba(0, 90, 90, 0.08) !important; color: #005a5a !important; }
+.btn-teal { background-color: #005a5a !important; border-color: #005a5a !important; color: #fff !important; }
+.btn-teal:hover { background-color: #004d4d !important; border-color: #004d4d !important; box-shadow: 0 4px 12px rgba(0, 90, 90, 0.2) !important; }
+.hover-bg-teal-soft:hover { background-color: rgba(0, 90, 90, 0.04) !important; border-color: #005a5a !important; }
+.border-dashed { border-style: dashed !important; }
+.transition-all { transition: all 0.3s ease; }
+.bg-light-soft { background-color: rgba(0, 90, 90, 0.04) !important; }
+</style>
+
+<script>
+function updateFileName(input) {
+    const display = document.getElementById('fileNameDisplay');
+    if (input.files && input.files[0]) {
+        display.textContent = 'Selected: ' + input.files[0].name;
+        display.classList.remove('d-none');
+    } else {
+        display.classList.add('d-none');
+    }
+}
+</script>

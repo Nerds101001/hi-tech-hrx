@@ -17,22 +17,22 @@ class MyAssetsController extends Controller
 {
     public function index()
     {
-        $assets = Asset::with(['category', 'assignedUser'])
+        $assets = \App\Models\Asset::with(['category', 'assignedUser'])
             ->where('assigned_to', auth()->id())
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
         $stats = [
-            'total' => Asset::where('assigned_to', auth()->id())->count(),
-            'available' => Asset::where('assigned_to', auth()->id())
+            'total' => \App\Models\Asset::where('assigned_to', auth()->id())->count(),
+            'available' => \App\Models\Asset::where('assigned_to', auth()->id())
                 ->where('status', 'available')->count(),
-            'assigned' => Asset::where('assigned_to', auth()->id())
+            'assigned' => \App\Models\Asset::where('assigned_to', auth()->id())
                 ->where('status', 'assigned')->count(),
-            'maintenance' => Asset::where('assigned_to', auth()->id())
+            'maintenance' => \App\Models\Asset::where('assigned_to', auth()->id())
                 ->where('status', 'maintenance')->count(),
-            'retired' => Asset::where('assigned_to', auth()->id())
+            'retired' => \App\Models\Asset::where('assigned_to', auth()->id())
                 ->where('status', 'retired')->count(),
-            'total_value' => Asset::where('assigned_to', auth()->id())->sum('current_value'),
+            'total_value' => \App\Models\Asset::where('assigned_to', auth()->id())->sum('current_value'),
         ];
 
         return view('tenant.my-assets.index', compact('assets', 'stats'));
@@ -40,7 +40,7 @@ class MyAssetsController extends Controller
 
     public function show($id)
     {
-        $asset = Asset::with(['category', 'assignedUser', 'maintenanceRecords'])
+        $asset = \App\Models\Asset::with(['category', 'assignedUser', 'maintenanceRecords'])
             ->where('assigned_to', auth()->id())
             ->findOrFail($id);
 
@@ -49,7 +49,7 @@ class MyAssetsController extends Controller
 
     public function getListAjax(Request $request)
     {
-        $assets = Asset::with(['category', 'assignedUser'])
+        $assets = \App\Models\Asset::with(['category', 'assignedUser'])
             ->where('assigned_to', auth()->id())
             ->orderBy('created_at', 'desc');
 
@@ -97,7 +97,7 @@ class MyAssetsController extends Controller
     public function requestMaintenance(Request $request, $id)
     {
         try {
-            $asset = Asset::findOrFail($id);
+            $asset = \App\Models\Asset::findOrFail($id);
             
             // Create maintenance request (you could implement a separate maintenance request system)
             Log::info('Maintenance requested for asset: ' . $asset->name . ' by user: ' . auth()->user()->first_name);

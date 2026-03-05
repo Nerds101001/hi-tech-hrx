@@ -22,7 +22,7 @@ class OnboardingMiddleware
             $userStatus = $user->status instanceof \UnitEnum ? $user->status->value : $user->status;
 
             // If user is in the middle of onboarding, force them to the form
-            if ($userStatus === UserAccountStatus::ONBOARDING->value) {
+            if ($userStatus === UserAccountStatus::ONBOARDING->value || $userStatus === UserAccountStatus::ONBOARDING_REQUESTED->value) {
                 if (!$request->is('onboarding*') && !$request->is('logout')) {
                     return redirect()->route('onboarding.form');
                 }

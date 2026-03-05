@@ -7,49 +7,38 @@
 @vite(['resources/assets/vendor/scss/pages/hitech-portal.scss'])
 @endsection
 @section('content')
-<div class="row g-6">
+<div class="emp-hub-wrapper">
   <!-- Welcome Section -->
-  <div class="col-lg-12">
-    <div class="manager-hero animate__animated animate__fadeIn">
-      <div class="manager-hero-text">
-        <div class="greeting">Welcome Back, {{ auth()->user()->first_name }}! 👋</div>
-        <div class="sub-text">Team Manager | Overview & Approvals</div>
+  <div class="emp-hero animate__animated animate__fadeIn">
+    <div class="emp-hero-text">
+      <div class="greeting">
+        Good {{ now()->hour < 12 ? 'Morning' : (now()->hour < 17 ? 'Afternoon' : 'Evening') }},
+        {{ auth()->user()->first_name }}! 👋
       </div>
-      <div class="d-none d-md-block" style="position:relative; z-index:1;">
-        <img src="{{asset('assets/img/illustrations/man-with-laptop-light.png')}}" height="120" alt="Welcome" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));">
+      <div class="date-badge mt-2">
+        <i class="bx bx-calendar" style="font-size:0.85rem;"></i>
+        {{ now()->format('l, F jS') }}
+      </div>
+    </div>
+    <div class="emp-hero-meta">
+      <div class="hero-quick-stat">
+        <div class="stat-value text-danger">{{ $pendingLeaveRequests }}</div>
+        <div class="stat-label">Pending Leaves</div>
+      </div>
+      <div class="hero-quick-stat">
+        <div class="stat-value text-warning">{{ $pendingExpenseRequests }}</div>
+        <div class="stat-label">Pending Expenses</div>
+      </div>
+      <div class="hero-quick-stat">
+        <div class="stat-value">{{ $teamOutToday->count() }}</div>
+        <div class="stat-label">Team Out Today</div>
       </div>
     </div>
   </div>
 
-  <div class="col-xl-8 col-lg-7">
-    <!-- Pending Approvals Row -->
-    <div class="row g-6 mb-6">
-      <div class="col-md-6 animate__animated animate__fadeInUp" style="animation-delay: 0.05s">
-        <div class="hitech-stat-card dashboard-variant card-red h-100">
-          <div class="stat-card-header">
-             <div class="stat-icon-wrap icon-red"><i class="bx bx-git-pull-request"></i></div>
-             <a href="{{ route('leaveRequests.index') }}" class="btn btn-sm btn-outline-danger border-0 rounded-pill fw-bold">Review All <i class="bx bx-chevron-right"></i></a>
-          </div>
-          <div class="mt-2">
-            <h3 class="stat-value mb-1" style="color:#dc2626;">{{ $pendingLeaveRequests }}</h3>
-            <small class="stat-label text-danger">Pending Leaves</small>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6 animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
-        <div class="hitech-stat-card dashboard-variant card-amber h-100">
-          <div class="stat-card-header">
-             <div class="stat-icon-wrap icon-amber"><i class="bx bx-receipt"></i></div>
-             <a href="{{ route('expenseRequests.index') }}" class="btn btn-sm btn-outline-warning border-0 rounded-pill fw-bold" style="color:#d97706;">Review All <i class="bx bx-chevron-right"></i></a>
-          </div>
-          <div class="mt-2">
-            <h3 class="stat-value mb-1" style="color:#d97706;">{{ $pendingExpenseRequests }}</h3>
-            <small class="stat-label text-warning">Pending Expenses</small>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="row g-4">
+    <div class="col-xl-8 col-lg-7">
+      <div class="row g-4 mb-4">
 
     <!-- Team Availability Section -->
     <div class="hitech-card mb-6">
@@ -102,35 +91,41 @@
     </div>
 
     <!-- Personal Stats Row -->
-    <div class="row g-6 mt-2">
+    <div class="row g-4 mt-2">
       <div class="col-12">
         <h5 class="mb-2 ms-1 fw-bold text-dark opacity-75">My Personal Stats</h5>
       </div>
-      <div class="col-md-4 animate__animated animate__fadeInUp" style="animation-delay: 0.15s">
-        <div class="hitech-stat-card dashboard-variant card-teal pt-3 pb-3 text-center align-items-center">
-          <div class="avatar bg-label-teal p-2 rounded mb-2" style="background:rgba(0,90,90,0.1); color:#005a5a;">
-            <i class="bx bx-calendar bx-sm"></i>
+      <div class="col-md-4 col-sm-6 animate__animated animate__fadeInUp" style="animation-delay: 0.15s">
+        <div class="hitech-stat-card dashboard-variant card-teal pt-3 pb-3 text-center align-items-center h-100">
+          <div class="stat-card-header justify-content-center w-100 mb-2">
+             <div class="stat-icon-wrap icon-teal"><i class="bx bx-calendar-check"></i></div>
           </div>
-          <h3 class="stat-value mb-0">{{ $myLeavesCount }}</h3>
-          <small class="stat-label text-muted">My Leaves</small>
+          <div>
+            <h3 class="stat-value mb-0">{{ $myLeavesCount }}</h3>
+            <small class="stat-label text-muted">My Leaves</small>
+          </div>
         </div>
       </div>
-      <div class="col-md-4 animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
-        <div class="hitech-stat-card dashboard-variant card-amber pt-3 pb-3 text-center align-items-center">
-          <div class="avatar bg-label-warning p-2 rounded mb-2" style="background:rgba(245,158,11,0.1); color:#d97706;">
-            <i class="bx bx-wallet bx-sm"></i>
+      <div class="col-md-4 col-sm-6 animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+        <div class="hitech-stat-card dashboard-variant card-amber pt-3 pb-3 text-center align-items-center h-100">
+          <div class="stat-card-header justify-content-center w-100 mb-2">
+             <div class="stat-icon-wrap icon-amber"><i class="bx bx-receipt"></i></div>
           </div>
-          <h3 class="stat-value mb-0">{{ $myExpensesCount }}</h3>
-          <small class="stat-label text-muted">My Expenses</small>
+          <div>
+            <h3 class="stat-value mb-0">{{ $myExpensesCount }}</h3>
+            <small class="stat-label text-muted">My Expenses</small>
+          </div>
         </div>
       </div>
-      <div class="col-md-4 animate__animated animate__fadeInUp" style="animation-delay: 0.25s">
-        <div class="hitech-stat-card dashboard-variant card-red pt-3 pb-3 text-center align-items-center">
-          <div class="avatar bg-label-danger p-2 rounded mb-2" style="background:rgba(239,68,68,0.1); color:#dc2626;">
-            <i class="bx bx-error-circle bx-sm"></i>
+      <div class="col-md-4 col-sm-12 animate__animated animate__fadeInUp" style="animation-delay: 0.25s">
+        <div class="hitech-stat-card dashboard-variant card-red pt-3 pb-3 text-center align-items-center h-100">
+          <div class="stat-card-header justify-content-center w-100 mb-2">
+             <div class="stat-icon-wrap icon-red"><i class="bx bx-error-circle"></i></div>
           </div>
-          <h3 class="stat-value mb-0" style="color:#dc2626;">{{ $mySOSCount }}</h3>
-          <small class="stat-label text-muted">My SOS Alerts</small>
+          <div>
+            <h3 class="stat-value mb-0 text-danger">{{ $mySOSCount }}</h3>
+            <small class="stat-label text-muted">My SOS Alerts</small>
+          </div>
         </div>
       </div>
     </div>
@@ -138,7 +133,7 @@
 
   <!-- Sidebar: Holidays & News -->
   <div class="col-xl-4 col-lg-5">
-    <div class="row g-6">
+    <div class="d-flex flex-column gap-4">
       <div class="col-12">
         <!-- Next Holiday -->
         <div class="holiday-card animate__animated animate__fadeInRight" style="animation-delay:0.05s">
@@ -154,10 +149,10 @@
         </div>
 
         <!-- Announcements -->
-        <div class="announce-card mt-6 animate__animated animate__fadeInRight" style="animation-delay:0.12s">
+        <div class="announce-card animate__animated animate__fadeInRight" style="animation-delay:0.12s">
           <div class="announce-header">
-            <h6 class="mb-0">Company Announcements</h6>
-            <i class="bx bx-news bx-sm text-muted"></i>
+            <h6>Announcements</h6>
+            <i class="bx bx-news" style="color:#94a3b8;"></i>
           </div>
           <div class="announce-body">
             @forelse($recentNotices as $notice)
@@ -169,10 +164,14 @@
                 </div>
               </div>
             @empty
-              <p class="text-center text-muted py-4 small">No recent notices.</p>
+              <div style="text-align:center; padding:2rem 1rem; color:#94a3b8; font-size:0.82rem;">
+                <i class="bx bx-inbox" style="font-size:2rem; display:block; margin-bottom:0.5rem; opacity:0.4;"></i>
+                No recent announcements.
+              </div>
             @endforelse
           </div>
         </div>
+
       </div>
     </div>
   </div>

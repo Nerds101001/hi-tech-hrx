@@ -20,6 +20,7 @@ class Asset extends Model
         'status',
         'location',
         'serial_number',
+        'service_tag', // Note: This might map to 'notes' or a new column
         'brand',
         'model',
         'warranty_expiry',

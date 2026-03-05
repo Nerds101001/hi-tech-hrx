@@ -20,7 +20,7 @@ class AssetController extends Controller
     public function index()
     {
         try {
-            $assets = Asset::with(['category', 'assignedUser', 'createdBy'])
+            $assets = \App\Models\Asset::with(['category', 'assignedUser', 'createdBy'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
 
@@ -29,12 +29,12 @@ class AssetController extends Controller
                 ->get();
 
             $stats = [
-                'total' => Asset::count(),
-                'available' => Asset::where('status', 'available')->count(),
-                'assigned' => Asset::where('status', 'assigned')->count(),
-                'maintenance' => Asset::where('status', 'maintenance')->count(),
-                'retired' => Asset::where('status', 'retired')->count(),
-                'total_value' => Asset::sum('current_value'),
+                'total' => \App\Models\Asset::count(),
+                'available' => \App\Models\Asset::where('status', 'available')->count(),
+                'assigned' => \App\Models\Asset::where('status', 'assigned')->count(),
+                'maintenance' => \App\Models\Asset::where('status', 'maintenance')->count(),
+                'retired' => \App\Models\Asset::where('status', 'retired')->count(),
+                'total_value' => \App\Models\Asset::sum('current_value'),
             ];
 
             return view('tenant.assets.index', [
@@ -97,7 +97,7 @@ class AssetController extends Controller
                     ->withInput();
             }
 
-            $asset = Asset::create([
+            $asset = \App\Models\Asset::create([
                 'name' => $request->name,
                 'asset_code' => $request->asset_code,
                 'category_id' => $request->category_id,
@@ -127,7 +127,7 @@ class AssetController extends Controller
 
     public function show($id)
     {
-        $asset = Asset::with(['category', 'assignedUser', 'createdBy', 'maintenanceRecords'])
+        $asset = \App\Models\Asset::with(['category', 'assignedUser', 'createdBy', 'maintenanceRecords'])
             ->findOrFail($id);
 
         return view('tenant.assets.show', compact('asset'));
@@ -135,7 +135,7 @@ class AssetController extends Controller
 
     public function edit($id)
     {
-        $asset = Asset::findOrFail($id);
+        $asset = \App\Models\Asset::findOrFail($id);
         $categories = AssetCategory::where('status', Status::ACTIVE)
             ->orderBy('name')
             ->get();
@@ -149,7 +149,7 @@ class AssetController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $asset = Asset::findOrFail($id);
+            $asset = \App\Models\Asset::findOrFail($id);
 
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
@@ -204,7 +204,7 @@ class AssetController extends Controller
     public function destroy($id)
     {
         try {
-            $asset = Asset::findOrFail($id);
+            $asset = \App\Models\Asset::findOrFail($id);
             $asset->delete();
 
             return redirect()->route('assets.index')
@@ -219,7 +219,7 @@ class AssetController extends Controller
 
     public function getListAjax(Request $request)
     {
-        $query = Asset::with(['category', 'assignedUser']);
+        $query = \App\Models\Asset::with(['category', 'assignedUser']);
 
         if ($request->has('searchTerm') && !empty($request->searchTerm)) {
             $search = $request->searchTerm;
@@ -266,7 +266,7 @@ class AssetController extends Controller
     public function assignAsset(Request $request, $id)
     {
         try {
-            $asset = Asset::findOrFail($id);
+            $asset = \App\Models\Asset::findOrFail($id);
             $asset->update([
                 'assigned_to' => $request->user_id,
                 'status' => 'assigned',
@@ -283,7 +283,7 @@ class AssetController extends Controller
     public function unassignAsset($id)
     {
         try {
-            $asset = Asset::findOrFail($id);
+            $asset = \App\Models\Asset::findOrFail($id);
             $asset->update([
                 'assigned_to' => null,
                 'status' => 'available',

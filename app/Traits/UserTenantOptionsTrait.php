@@ -15,21 +15,22 @@ use App\Models\PayrollAdjustment;
 use App\Models\SalesTarget;
 use App\Models\Shift;
 use App\Models\Site;
+use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\UserAvailableLeave;
 use App\Models\UserDevice;
 use App\Models\UserSettings;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Modules\Assets\app\Models\Asset;
-use Modules\Assets\app\Models\AssetActivity;
-use Modules\Assets\app\Models\AssetAssignment;
-use Modules\Assets\app\Models\AssetMaintenance;
-use Modules\Calendar\app\Models\Event;
-use Modules\LMS\app\Models\CourseEnrollment;
-use Modules\LMS\app\Models\LessonCompletion;
-use Modules\Notes\app\Models\Note;
-use Modules\Notes\app\Models\Tag;
+use App\Models\Asset;
+use App\Models\AssetActivity;
+use App\Models\AssetAssignment;
+use App\Models\AssetMaintenance;
+use App\Models\Event;
+use App\Models\CourseEnrollment;
+use App\Models\LessonCompletion;
+use App\Models\Note;
+use App\Models\Tag;
 
 trait UserTenantOptionsTrait
 {
@@ -192,12 +193,12 @@ trait UserTenantOptionsTrait
   public function currentAssets() // Not a standard relationship, but a useful query
   {
     // Get assets through assignments where returned_at is null
-    return Asset::whereHas('assignments', function ($query) {
+    return \App\Models\Asset::whereHas('assignments', function ($query) {
       $query->where('user_id', $this->id)->whereNull('returned_at');
     })->get();
 
     // Alternative using HasManyThrough requires more setup or a dedicated "CurrentAssignment" model/view
-    // return $this->hasManyThrough(Asset::class, AssetAssignment::class, 'user_id', 'id', 'id', 'asset_id')
+    // return $this->hasManyThrough(\App\Models\Asset::class, AssetAssignment::class, 'user_id', 'id', 'id', 'asset_id')
     //            ->whereNull('asset_assignments.returned_at');
   }
 
@@ -214,7 +215,7 @@ trait UserTenantOptionsTrait
    */
   public function createdAssets(): HasMany
   {
-    return $this->hasMany(Asset::class, 'created_by_id');
+    return $this->hasMany(\App\Models\Asset::class, 'created_by_id');
   }
 
   /**
@@ -248,6 +249,11 @@ trait UserTenantOptionsTrait
   public function lessonCompletions(): HasMany
   {
     return $this->hasMany(LessonCompletion::class);
+  }
+
+  public function tasks()
+  {
+    return $this->hasMany(Task::class);
   }
 
 }

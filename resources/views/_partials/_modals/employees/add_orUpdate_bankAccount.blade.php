@@ -1,6 +1,6 @@
 <!-- Edit Bank Account Information Modal -->
-<div class="modal fade" id="offcanvasAddAccount" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="editBankAccountModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content modal-content-hitech">
       <div class="modal-header modal-header-hitech">
         <div class="d-flex align-items-center">
@@ -15,17 +15,16 @@
       </div>
 
       <div class="modal-body modal-body-hitech">
-        <form action="{{ route('employees.addOrUpdateBankAccount') }}" method="POST" id="bankAccountForm">
+        <form action="{{ route('employees.addOrUpdateBankAccount') }}" method="POST" id="bankAccountForm" enctype="multipart/form-data">
           @csrf
           <input type="hidden" name="userId" id="userId" value="{{ $user->id }}">
 
           <div class="row g-4">
-            <div class="col-12">
+            <div class="col-md-6">
               <label class="form-label-hitech" for="accountName">@lang('Account Holder Name') <span class="text-danger">*</span></label>
               <input type="text" name="accountName" id="accountName" class="form-control form-control-hitech" placeholder="@lang('Full Name as per Bank')" value="{{ $user->bank_account ? $user->bank_account->account_name : '' }}" required/>
             </div>
-
-            <div class="col-12">
+            <div class="col-md-6">
               <label class="form-label-hitech" for="bankName">@lang('Bank Name') <span class="text-danger">*</span></label>
               <input type="text" name="bankName" id="bankName" class="form-control form-control-hitech" placeholder="@lang('e.g. HDFC Bank')" value="{{ $user->bank_account ? $user->bank_account->bank_name : '' }}" required/>
             </div>
@@ -39,7 +38,7 @@
                <input type="text" name="branchName" id="branchName" class="form-control form-control-hitech" placeholder="@lang('Branch Location')" value="{{ $user->bank_account ? $user->bank_account->branch_name : '' }}"/>
             </div>
 
-            <div class="col-12">
+            <div class="col-md-6">
               <label class="form-label-hitech" for="accountNumber">@lang('Bank Account Number') <span class="text-danger">*</span></label>
               <div class="input-group">
                 <input type="password" name="accountNumber" id="accountNumber" class="form-control form-control-hitech" placeholder="@lang('Account Number')" value="{{ $user->bank_account ? $user->bank_account->account_number : '' }}" autocomplete="off" required/>
@@ -47,10 +46,27 @@
               </div>
             </div>
 
-            <div class="col-12">
+            <div class="col-md-6">
               <label class="form-label-hitech" for="confirmAccountNumber">@lang('Confirm Bank Account Number') <span class="text-danger">*</span></label>
               <input type="password" id="confirmAccountNumber" class="form-control form-control-hitech" placeholder="@lang('Re-type Account Number')" value="{{ $user->bank_account ? $user->bank_account->account_number : '' }}" autocomplete="off" required/>
               <div id="accountNumberFeedback" class="invalid-feedback">Account numbers do not match.</div>
+            </div>
+
+            <!-- Bank Document Upload -->
+            <div class="col-12">
+              <label class="form-label-hitech" for="bankDocument">@lang('Bank Passbook / Cancelled Cheque') <span class="text-danger">*</span></label>
+              <div class="p-3 border-2 rounded-3 text-center" style="border: 2px dashed #E2E8F0; background-color: #F8FAFC;">
+                  <i class="bx bx-cloud-upload text-muted mb-2" style="font-size: 2rem;"></i>
+                  <p class="small text-muted mb-2">Upload JPG, PNG or PDF (Max 5MB)</p>
+                  <input type="file" name="bankDocument" id="bankDocument" class="form-control form-control-hitech" accept=".jpg,.jpeg,.png,.pdf" required/>
+                  @if($user->bank_account && $user->bank_account->passbook_path)
+                      <div class="mt-2">
+                          <span class="badge bg-label-success">Current Document: 
+                              <a href="{{ asset('storage/' . $user->bank_account->passbook_path) }}" target="_blank" class="text-success">View</a>
+                          </span>
+                      </div>
+                  @endif
+              </div>
             </div>
           </div>
 

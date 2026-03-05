@@ -24,6 +24,7 @@ class BankAccount extends Model implements AuditableContract
     'account_number',
     'branch_name',
     'branch_code',
+    'passbook_path',
     'tax_no',
     'created_by_id',
     'updated_by_id',
